@@ -1,0 +1,16 @@
+<table class="table table-primary table-sm">
+  <thead class="table-dark">
+  <tr>
+    <th scope="col">Username</th>
+    <th scope="col">Status</th>
+    <th scope="col"></th>
+  </tr>
+  </thead>
+  <tbody>
+  <tr *ngFor="let user of users">
+    <th scope="row">{{user.username}}</th>
+    <th>{{user.enabled ? 'Enabled' : 'Disabled'}}</th>
+    <th><a routerLink="/users/{{user._id}}" class="btn btn-secondary" role="button"><i class="bi bi-pen"></i> Manage</a> </th>
+  </tr>
+  </tbody>
+</table>

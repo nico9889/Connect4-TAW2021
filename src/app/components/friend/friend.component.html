@@ -1,0 +1,5 @@
+<div *ngIf="friend" class="card">
+  <div [ngClass]="friend.online ? 'card border-success' : 'card border-danger'">
+    <img alt="Profile photo" src=""/> <a>{{friend.username}}</a>
+  </div>
+</div>

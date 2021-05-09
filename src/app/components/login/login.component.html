@@ -1,0 +1,17 @@
+<div class="container text-center">
+  <h1 class="h3 mb-3"><i class="bi bi-box-arrow-in-right"></i> Please sign in</h1>
+
+  <label for="inputUsername" class="sr-only">Username</label>
+  <input type="text" #usernametxt id="inputUsername" class="form-control" placeholder="Username" required autofocus>
+
+  <label for="inputPassword" class="sr-only">Password</label>
+  <input type="password" #passwdtxt id="inputPassword" class="form-control" placeholder="Password" required>
+
+  <div *ngIf="errMessage" class="alert alert-danger" role="alert">
+    Login error: {{errMessage}}
+  </div>
+
+  <button class="btn btn-lg btn-primary btn-block m-3" (click)="login( usernametxt.value, passwdtxt.value);">Sign in
+  </button>
+  <p><a routerLink="/register">Sign-up new user</a></p>
+</div>
