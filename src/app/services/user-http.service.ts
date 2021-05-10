@@ -4,7 +4,9 @@ import {UserBasicAuthService} from './user-basic-auth.service';
 import {Observable, throwError} from 'rxjs';
 import {catchError, tap} from 'rxjs/operators';
 import {LeaderboardUser, User} from '../models/User';
+import {Notification} from '../models/Notification';
 import {Status} from '../models/Status';
+import {Friend} from "../models/Friend";
 
 @Injectable({
   providedIn: 'root'
@@ -76,6 +78,33 @@ export class UserHttpService {
   getLeaderboard(): Observable<LeaderboardUser[]> {
     return this.http.get<LeaderboardUser[]>(this.us.url + '/v1/leaderboard', this.createOptions({})).pipe(
       tap((data) => console.log(JSON.stringify(data))),
+      catchError((error) => {
+        this.handleError(error);
+        return throwError(error);
+      })
+    );
+  }
+
+  sendFriendRequest(username: string): Observable<Status> {
+    return this.http.post<Status>(this.us.url + '/v1/friendship/' + username, {request: true}, this.createOptions({})).pipe(
+      catchError((error) => {
+        this.handleError(error);
+        return throwError(error);
+      })
+    );
+  }
+
+  acceptFriendRequest(notification: Notification): Observable<Status> {
+    return this.http.put<Status>(this.us.url + '/v1/friendship/', {notification}, this.createOptions({})).pipe(
+      catchError((error) => {
+        this.handleError(error);
+        return throwError(error);
+      })
+    );
+  }
+
+  getFriends(): Observable<Friend[]>{
+    return this.http.get<Friend[]>(this.us.url + '/v1/friendship/', this.createOptions({})).pipe(
       catchError((error) => {
         this.handleError(error);
         return throwError(error);

@@ -9,6 +9,7 @@ interface TokenData {
   roles: string[];
   id: string;
   enabled: boolean;
+  exp: number;
 }
 
 @Injectable()
@@ -78,11 +79,17 @@ export class UserBasicAuthService {
   }
 
   isLoggedIn(): boolean {
-    return this.token !== '';
+    return this.token !== '' && this.isTokenExpired();
   }
 
   getToken(): string {
     return this.token;
+  }
+
+  isTokenExpired(): boolean {
+    if (this.token !== '') {
+      return ((jwtDecode(this.token) as TokenData).exp * 1000) > Date.now();
+    }
   }
 
   getUsername(): string {
@@ -107,9 +114,5 @@ export class UserBasicAuthService {
     } else {
       return false;
     }
-  }
-
-  validate(): boolean {
-    return false;
   }
 }

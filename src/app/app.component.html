@@ -59,6 +59,13 @@
       <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
     </div>
     <div class="offcanvas-body">
+      <div class="input-group mb-3">
+        <input type="text" #usernametxt id="inputUsername" class="form-control" placeholder="Username"
+               aria-describedby="username-button">
+        <button class="btn btn-secondary" (click)="sendFriendRequest(usernametxt.value);" id="username-button">
+          Add friend
+        </button>
+      </div>
       <div *ngFor="let friend of friends"
            [ngClass]="friend.online ? 'card border-success m-2' : 'card border-danger m-2'" class="card">
         <div class="row m-1 align-items-center">

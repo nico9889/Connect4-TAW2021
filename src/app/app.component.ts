@@ -4,7 +4,7 @@ import {Friend} from './models/Friend';
 import {UserBasicAuthService} from './services/user-basic-auth.service';
 import {NotificationService} from './services/notification.service';
 import {Notification, Type} from './models/Notification';
-import {not} from "rxjs/internal-compatibility";
+import {UserHttpService} from './services/user-http.service';
 
 @Component({
   selector: 'app-root',
@@ -14,10 +14,10 @@ import {not} from "rxjs/internal-compatibility";
 export class AppComponent implements OnInit {
   public title: 'Connect 4';
   us: UserBasicAuthService;
-  friends: Friend[] = FRIENDS;
+  friends: Friend[] = [];
   notifications: Notification[] = [];
 
-  constructor(us: UserBasicAuthService, private ns: NotificationService) {
+  constructor(us: UserBasicAuthService, private users: UserHttpService, private ns: NotificationService) {
     this.us = us;
   }
 
@@ -29,6 +29,9 @@ export class AppComponent implements OnInit {
         console.error(err);
         this.notifications = [];
         this.notifications.push({type: Type.ERROR, senderId: '0', senderUsername: 'SYSTEM', expiry: new Date()});
+      });
+      this.users.getFriends().subscribe((friends) => {
+        this.friends = friends;
       });
     }
   }
@@ -45,5 +48,16 @@ export class AppComponent implements OnInit {
 
   acceptNotificaiton(notificaiton: Notification): void {
     this.removeNotification(notificaiton);
+    if (notificaiton.type === Type.FRIEND_REQUEST) {
+      this.acceptFriendRequest(notificaiton);
+    }
+  }
+
+  sendFriendRequest(username: string): void {
+    this.users.sendFriendRequest(username).subscribe();
+  }
+
+  acceptFriendRequest(notification: Notification): void {
+    this.users.acceptFriendRequest(notification).subscribe();
   }
 }
