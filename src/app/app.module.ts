@@ -16,6 +16,7 @@ import { UsersComponent } from './components/users/users.component';
 import {UserHttpService} from './services/user-http.service';
 import { UserComponent } from './components/user/user.component';
 import { LeaderboardComponent } from './components/leaderboard/leaderboard.component';
+import {NotificationService} from "./services/notification.service";
 
 @NgModule({
   declarations: [
@@ -39,6 +40,7 @@ import { LeaderboardComponent } from './components/leaderboard/leaderboard.compo
   providers: [
     {provide: UserBasicAuthService, useClass: UserBasicAuthService },
     {provide: UserHttpService, useClass: UserHttpService },
+    {provide: NotificationService, useClass: NotificationService },
   ],
   bootstrap: [AppComponent]
 })

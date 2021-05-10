@@ -17,6 +17,11 @@
       </ul>
       <ul class="navbar-nav ms-auto">
         <li *ngIf="us.isLoggedIn()">
+          <a class="nav-link" data-bs-toggle="offcanvas" href="#notificationsOffCanvas">
+            <i class="bi bi-bell"></i><span class="badge rounded-pill" *ngIf="notifications.length > 0">{{notifications.length}}</span>
+            Notifications</a>
+        </li>
+        <li *ngIf="us.isLoggedIn()">
           <a class="nav-link" data-bs-toggle="offcanvas" href="#friendsOffCanvas"><i class="bi bi-people"></i>
             Friends</a>
         </li>
@@ -62,13 +67,40 @@
                  src="{{(friend.avatar)? friend.avatar:'assets/img/profile.png'}}"/>
           </div>
           <div class="col">
-              <a href=""><i class="bi bi-chat-dots mx-2" style="font-size: 2rem;"></i></a>
-              <a href=""><i class="bi bi-joystick mx-2" style="font-size: 2rem;"></i></a>
-              <a href=""><i [ngClass]="(friend.online)?'bi bi-eye mx-2':'bi bi-eye-slash mx-2'" style="font-size: 2rem;"></i></a>
+            <a href=""><i class="bi bi-chat-dots mx-2" style="font-size: 2rem;"></i></a>
+            <a href=""><i class="bi bi-joystick mx-2" style="font-size: 2rem;"></i></a>
+            <a href=""><i [ngClass]="(friend.online)?'bi bi-eye mx-2':'bi bi-eye-slash mx-2'"
+                          style="font-size: 2rem;"></i></a>
           </div>
         </div>
         <div class="row ms-3">
           <a>{{friend.username}}</a>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="mt-3">
+    <router-outlet></router-outlet>
+  </div>
+</div>
+
+<div class="container-fluid">
+  <div class="offcanvas offcanvas-end" tabindex="-1" id="notificationsOffCanvas"
+       aria-labelledby="notificationsOffCanvasLabel">
+    <div class="offcanvas-header">
+      <h5 id="notificationsOffCanvasLabel"><i class="bi bi-bell"></i> Notifications</h5>
+      <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+    </div>
+    <div class="offcanvas-body">
+      <div *ngFor="let notification of notifications"
+           [ngClass]="(notification.type.valueOf()!=0)? 'card border-info m-2':'card border-danger m-2'">
+        <h5 class="card-title m-3">{{notification.senderUsername}}</h5>
+        <div class="card-body">
+          <p class="card-text" *ngIf="notification.type==0">An error has occurred while retrieving the notifications</p>
+          <p class="card-text" *ngIf="notification.type==1">Sent you a new friend request!</p>
+          <p class="card-text" *ngIf="notification.type==2">Sent you a new game request!</p>
+          <a class="btn btn-success btn-sm" (click)="acceptNotificaiton(notification)"><i class="bi bi-check"></i> Accept</a>
+          <a class="btn btn-danger btn-sm" (click)="removeNotification(notification)"><i class="bi bi-x"></i> Refuse</a>
         </div>
       </div>
     </div>
