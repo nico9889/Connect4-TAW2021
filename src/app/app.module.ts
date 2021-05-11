@@ -17,6 +17,9 @@ import {UserHttpService} from './services/user-http.service';
 import { UserComponent } from './components/user/user.component';
 import { LeaderboardComponent } from './components/leaderboard/leaderboard.component';
 import {NotificationService} from "./services/notification.service";
+import {SocketioService} from "./services/socketio.service";
+import { ChatComponent } from './components/chat/chat.component';
+import {ChatService} from "./services/chat.service";
 
 @NgModule({
   declarations: [
@@ -27,7 +30,8 @@ import {NotificationService} from "./services/notification.service";
     RegisterComponent,
     UsersComponent,
     UserComponent,
-    LeaderboardComponent
+    LeaderboardComponent,
+    ChatComponent
   ],
   imports: [
     AppRoutingModule,
@@ -41,6 +45,8 @@ import {NotificationService} from "./services/notification.service";
     {provide: UserBasicAuthService, useClass: UserBasicAuthService },
     {provide: UserHttpService, useClass: UserHttpService },
     {provide: NotificationService, useClass: NotificationService },
+    {provide: SocketioService, useClass: SocketioService },
+    {provide: ChatService, useClass: ChatService }
   ],
   bootstrap: [AppComponent]
 })

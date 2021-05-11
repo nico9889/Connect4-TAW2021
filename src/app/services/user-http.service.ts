@@ -6,7 +6,7 @@ import {catchError, tap} from 'rxjs/operators';
 import {LeaderboardUser, User} from '../models/User';
 import {Notification} from '../models/Notification';
 import {Status} from '../models/Status';
-import {Friend} from "../models/Friend";
+import {Friend} from '../models/Friend';
 
 @Injectable({
   providedIn: 'root'
@@ -33,7 +33,6 @@ export class UserHttpService {
 
   // tslint:disable-next-line: typedef
   private createOptions(params = {}) {
-    console.log('TOKEN: ' + this.us.getToken());
     return {
       headers: new HttpHeaders({
         authorization: 'Bearer ' + this.us.getToken(),
@@ -66,8 +65,8 @@ export class UserHttpService {
   }
 
   // tslint:disable-next-line:max-line-length
-  editUser(id: string, username: { username?: string, enabled?: boolean, avatar?: string, newPassword?: string, oldPassword?: string }): Observable<Status> {
-    return this.http.put<Status>(this.us.url + '/v1/users/' + id, username, this.createOptions({})).pipe(
+  editUser(id: string, data: { username?: string, enabled?: boolean, avatar?: string, newPassword?: string, oldPassword?: string }): Observable<Status> {
+    return this.http.put<Status>(this.us.url + '/v1/users/' + id, data, this.createOptions({})).pipe(
       catchError((error) => {
         this.handleError(error);
         return throwError(error);
@@ -94,8 +93,8 @@ export class UserHttpService {
     );
   }
 
-  acceptFriendRequest(notification: Notification): Observable<Status> {
-    return this.http.put<Status>(this.us.url + '/v1/friendship/', {notification}, this.createOptions({})).pipe(
+  respondFriendRequest(notification: Notification, accept: boolean): Observable<Status> {
+    return this.http.put<Status>(this.us.url + '/v1/friendship/', {notification, accept}, this.createOptions({})).pipe(
       catchError((error) => {
         this.handleError(error);
         return throwError(error);
@@ -105,6 +104,16 @@ export class UserHttpService {
 
   getFriends(): Observable<Friend[]>{
     return this.http.get<Friend[]>(this.us.url + '/v1/friendship/', this.createOptions({})).pipe(
+      catchError((error) => {
+        this.handleError(error);
+        return throwError(error);
+      })
+    );
+  }
+
+  getFriend(id: string): Observable<Friend> {
+    return this.http.get<Friend>(this.us.url + '/v1/friendship/' + id, this.createOptions({})).pipe(
+      tap((data) => console.log(JSON.stringify(data))),
       catchError((error) => {
         this.handleError(error);
         return throwError(error);

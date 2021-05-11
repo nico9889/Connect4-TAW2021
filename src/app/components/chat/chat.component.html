@@ -1,0 +1,20 @@
+<div class="container height-full">
+  <div class="input-group mb-3">
+    <div class="chat-box overflow-auto" #chatbox>
+      <div *ngFor="let message of messages" [ngClass]="(message.sender === us.getId()) ? 'card text-end': 'card'">
+        <h6 class="card-title ms-3 mt-3">{{(message.sender === us.getId()) ? us.getUsername() : user.username}}</h6>
+        <h6 class="card-subtitle ms-3 text-muted">{{message.datetime}}</h6>
+        <p class="card-body">
+          {{message.content}}
+        </p>
+      </div>
+    </div>
+    <div class="input-group mt-3">
+      <input type="text" #messagetxt id="inputMessage" class="form-control" placeholder="Message"
+             aria-describedby="send-button">
+      <button class="btn btn-primary" (click)="sendMessage(messagetxt)" id="send-button">
+        <i class="bi bi-arrow-up-circle"></i> Send
+      </button>
+    </div>
+  </div>
+</div>

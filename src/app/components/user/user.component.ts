@@ -2,6 +2,7 @@ import {Component, OnInit} from '@angular/core';
 import {UserHttpService} from '../../services/user-http.service';
 import {ActivatedRoute, Router} from '@angular/router';
 import {User} from '../../models/User';
+import {SocketioService} from '../../services/socketio.service';
 
 @Component({
   selector: 'app-user',
@@ -11,7 +12,7 @@ import {User} from '../../models/User';
 export class UserComponent implements OnInit {
   user: User;
 
-  constructor(private users: UserHttpService, private route: ActivatedRoute, private router: Router) {
+  constructor(private users: UserHttpService, private route: ActivatedRoute, private router: Router, private socket: SocketioService) {
   }
 
   ngOnInit(): void {
@@ -38,6 +39,13 @@ export class UserComponent implements OnInit {
     if (newPassword === newPasswordRepeat) {
       this.users.editUser(this.user._id, {oldPassword, newPassword}).subscribe((status) => console.log(status));
     }
+  }
+
+  switchEnabled(): void {
+    this.user.enabled = !this.user.enabled;
+    this.users.editUser(this.user._id, {enabled: this.user.enabled}).subscribe((status) => {
+      console.log(status);
+    });
   }
 
   // FIXME: MISSING SANITIZATION

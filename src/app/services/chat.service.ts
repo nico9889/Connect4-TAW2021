@@ -1,14 +1,16 @@
 import {Injectable} from '@angular/core';
 import {HttpClient, HttpErrorResponse, HttpHeaders, HttpParams} from '@angular/common/http';
 import {UserBasicAuthService} from './user-basic-auth.service';
-import {Observable, throwError} from 'rxjs';
-import {Notification} from '../models/Notification';
 import {catchError, tap} from 'rxjs/operators';
+import {Observable, throwError} from 'rxjs';
+import {Message} from '../models/Message';
+import {Status} from "../models/Status";
 
 @Injectable({
   providedIn: 'root'
 })
-export class NotificationService {
+export class ChatService {
+
   constructor(private http: HttpClient, private us: UserBasicAuthService) {
   }
 
@@ -26,7 +28,7 @@ export class NotificationService {
     return throwError('Something bad happened; please try again later.');
   }
 
-  // tslint:disable-next-line: typedef
+  // tslint:disable-next-line:typedef
   private createOptions(params = {}) {
     return {
       headers: new HttpHeaders({
@@ -38,8 +40,18 @@ export class NotificationService {
     };
   }
 
-  getNotifications(): Observable<Notification[]> {
-    return this.http.get<Notification[]>(this.us.url + '/v1/notifications', this.createOptions({})).pipe(
+  getUserChat(id: string): Observable<Message[]> {
+    return this.http.get<Message[]>(this.us.url + '/v1/messages/' + id, this.createOptions({})).pipe(
+      tap((data) => console.log(JSON.stringify(data))),
+      catchError((error) => {
+        this.handleError(error);
+        return throwError(error);
+      })
+    );
+  }
+
+  sendUserChat(content: string, receiver: string): Observable<Status> {
+    return this.http.post<Status>(this.us.url + '/v1/messages/' + receiver, {message: {content}}, this.createOptions({})).pipe(
       tap((data) => console.log(JSON.stringify(data))),
       catchError((error) => {
         this.handleError(error);

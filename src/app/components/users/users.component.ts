@@ -1,7 +1,7 @@
 import {Component, OnInit} from '@angular/core';
-import {Router} from '@angular/router';
 import {UserHttpService} from '../../services/user-http.service';
 import {User} from '../../models/User';
+import {SocketioService} from '../../services/socketio.service';
 
 @Component({
   selector: 'app-users',
@@ -12,7 +12,7 @@ export class UsersComponent implements OnInit {
 
   users: User[] = [];
 
-  constructor(public us: UserHttpService, private router: Router) {
+  constructor(public us: UserHttpService, private socket: SocketioService) {
   }
 
   ngOnInit(): void {

@@ -1,10 +1,10 @@
 import {Component, OnInit} from '@angular/core';
-import {FRIENDS} from './mock-friends';
 import {Friend} from './models/Friend';
 import {UserBasicAuthService} from './services/user-basic-auth.service';
 import {NotificationService} from './services/notification.service';
 import {Notification, Type} from './models/Notification';
 import {UserHttpService} from './services/user-http.service';
+import {SocketioService} from './services/socketio.service';
 
 @Component({
   selector: 'app-root',
@@ -12,12 +12,17 @@ import {UserHttpService} from './services/user-http.service';
   styleUrls: ['./app.component.css']
 })
 export class AppComponent implements OnInit {
-  public title: 'Connect 4';
+  title: 'Connect 4';
   us: UserBasicAuthService;
   friends: Friend[] = [];
   notifications: Notification[] = [];
+  alert: string;
+  success: boolean;
 
-  constructor(us: UserBasicAuthService, private users: UserHttpService, private ns: NotificationService) {
+  constructor(us: UserBasicAuthService,
+              private users: UserHttpService,
+              private ns: NotificationService,
+              private socket: SocketioService) {
     this.us = us;
   }
 
@@ -30,10 +35,18 @@ export class AppComponent implements OnInit {
         this.notifications = [];
         this.notifications.push({type: Type.ERROR, senderId: '0', senderUsername: 'SYSTEM', expiry: new Date()});
       });
-      this.users.getFriends().subscribe((friends) => {
-        this.friends = friends;
-      });
+      this.getFriends();
     }
+    console.log(this.us.isLoggedIn());
+    if (this.us.isLoggedIn()) {
+      this.socket.connect();
+    }
+  }
+
+  private getFriends(): void {
+    this.users.getFriends().subscribe((friends) => {
+      this.friends = friends;
+    });
   }
 
   logout(): void {
@@ -49,15 +62,39 @@ export class AppComponent implements OnInit {
   acceptNotificaiton(notificaiton: Notification): void {
     this.removeNotification(notificaiton);
     if (notificaiton.type === Type.FRIEND_REQUEST) {
-      this.acceptFriendRequest(notificaiton);
+      this.respondFriendRequest(notificaiton, true);
+    }
+  }
+
+  denyNotification(notification: Notification): void {
+    this.removeNotification(notification);
+    if (notification.type === Type.FRIEND_REQUEST) {
+      this.respondFriendRequest(notification, false);
     }
   }
 
   sendFriendRequest(username: string): void {
-    this.users.sendFriendRequest(username).subscribe();
+    this.users.sendFriendRequest(username).subscribe((status) => {
+      this.success = true;
+      this.alert = 'Friend request sent successfully';
+    }, (err) => {
+      this.success = false;
+      this.alert = 'Error while sending friend request';
+    });
   }
 
-  acceptFriendRequest(notification: Notification): void {
-    this.users.acceptFriendRequest(notification).subscribe();
+  respondFriendRequest(notification: Notification, accept: boolean): void {
+    this.users.respondFriendRequest(notification, accept).subscribe(
+      (status) => {
+        if (accept) {
+          this.alert = 'Friend request accepted!';
+        } else {
+          this.alert = 'Friend request rejected!';
+        }
+        this.success = true;
+      }, (err) => {
+        this.alert = 'Error while responding to the friend request';
+        this.success = false;
+      });
   }
 }
