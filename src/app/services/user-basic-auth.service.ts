@@ -1,4 +1,4 @@
-import {Injectable} from '@angular/core';
+import {Injectable, EventEmitter, Output} from '@angular/core';
 import {HttpClient, HttpHeaders} from '@angular/common/http';
 import {tap} from 'rxjs/operators';
 import {Observable} from 'rxjs';
@@ -12,10 +12,13 @@ interface TokenData {
   exp: number;
 }
 
+
 @Injectable()
 export class UserBasicAuthService {
   private token = '';
   public url = 'http://192.168.1.119:8080';
+
+  @Output() logged = new EventEmitter<boolean>();
 
   constructor(private http: HttpClient) {
     console.log('User service instantiated');
@@ -43,6 +46,7 @@ export class UserBasicAuthService {
         console.log(JSON.stringify(data));
         this.token = data.token;
         localStorage.setItem('connect4_874273_token', this.token);
+        this.logged.emit(true);
       }));
   }
 
@@ -50,6 +54,7 @@ export class UserBasicAuthService {
     console.log('Logging out');
     this.token = '';
     localStorage.setItem('connect4_874273_token', this.token);
+    this.logged.emit(false);
     const options = {
       headers: new HttpHeaders({
         'cache-control': 'no-cache',

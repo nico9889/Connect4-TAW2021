@@ -5,6 +5,8 @@ import {NotificationService} from './services/notification.service';
 import {Notification, Type} from './models/Notification';
 import {UserHttpService} from './services/user-http.service';
 import {SocketioService} from './services/socketio.service';
+import {GameService} from './services/game.service';
+import {Router} from '@angular/router';
 
 @Component({
   selector: 'app-root',
@@ -13,6 +15,7 @@ import {SocketioService} from './services/socketio.service';
 })
 export class AppComponent implements OnInit {
   title: 'Connect 4';
+  private audio;
   us: UserBasicAuthService;
   friends: Friend[] = [];
   notifications: Notification[] = [];
@@ -21,26 +24,57 @@ export class AppComponent implements OnInit {
 
   constructor(us: UserBasicAuthService,
               private users: UserHttpService,
+              private games: GameService,
               private ns: NotificationService,
-              private socket: SocketioService) {
+              private socket: SocketioService,
+              private router: Router
+  ) {
+    this.audio = new Audio();
+    this.audio.src = '../../../assets/sounds/notification.ogg';
+    this.audio.load();
     this.us = us;
+    this.us.logged.subscribe((logged) => {
+      if (logged) {
+        this.load();
+      } else {
+        this.socket.disconnect();
+      }
+    });
+  }
+
+  private load(): void {
+    this.socket.connect();
+    this.getFriends();
+    this.socket.socket.on('friend update', () => {
+      this.getFriends();
+    });
+    this.socket.socket.on('notification update', () => {
+      this.getNotifications();
+      this.audio.play();
+    });
+    this.socket.socket.on('game new', (m) => {
+      if (m.id) {
+        this.router.navigate(['/game/' + m.id]);
+      }
+    });
   }
 
   ngOnInit(): void {
     if (this.us.isLoggedIn()) {
-      this.ns.getNotifications().subscribe((notifications) => {
-        this.notifications = notifications;
-      }, (err) => {
-        console.error(err);
-        this.notifications = [];
-        this.notifications.push({type: Type.ERROR, senderId: '0', senderUsername: 'SYSTEM', expiry: new Date()});
-      });
-      this.getFriends();
+      this.load();
+    } else {
+      this.socket.disconnect();
     }
-    console.log(this.us.isLoggedIn());
-    if (this.us.isLoggedIn()) {
-      this.socket.connect();
-    }
+  }
+
+  private getNotifications(): void {
+    this.ns.getNotifications().subscribe((notifications) => {
+      this.notifications = notifications;
+    }, (err) => {
+      console.error(err);
+      this.notifications = [];
+      this.notifications.push({type: Type.ERROR, senderId: '0', senderUsername: 'SYSTEM', expiry: new Date()});
+    });
   }
 
   private getFriends(): void {
@@ -59,10 +93,18 @@ export class AppComponent implements OnInit {
     });
   }
 
-  acceptNotificaiton(notificaiton: Notification): void {
-    this.removeNotification(notificaiton);
-    if (notificaiton.type === Type.FRIEND_REQUEST) {
-      this.respondFriendRequest(notificaiton, true);
+  acceptNotification(notification: Notification): void {
+    this.removeNotification(notification);
+    switch (notification.type) {
+      case Type.FRIEND_REQUEST:
+        this.respondFriendRequest(notification, true);
+        break;
+      case Type.GAME_INVITE:
+        this.games.respondGameRequest(notification, true).subscribe((game) => {
+          this.router.navigate(['/game/' + game._id]);
+          console.log(game);
+        });
+        break;
     }
   }
 
@@ -74,10 +116,10 @@ export class AppComponent implements OnInit {
   }
 
   sendFriendRequest(username: string): void {
-    this.users.sendFriendRequest(username).subscribe((status) => {
+    this.users.sendFriendRequest(username).subscribe((_) => {
       this.success = true;
       this.alert = 'Friend request sent successfully';
-    }, (err) => {
+    }, (_) => {
       this.success = false;
       this.alert = 'Error while sending friend request';
     });
@@ -85,16 +127,27 @@ export class AppComponent implements OnInit {
 
   respondFriendRequest(notification: Notification, accept: boolean): void {
     this.users.respondFriendRequest(notification, accept).subscribe(
-      (status) => {
+      (_) => {
         if (accept) {
           this.alert = 'Friend request accepted!';
         } else {
           this.alert = 'Friend request rejected!';
         }
         this.success = true;
-      }, (err) => {
+      }, (_) => {
         this.alert = 'Error while responding to the friend request';
         this.success = false;
       });
+  }
+
+  sendGameRequest(id: string): void {
+    this.users.sendGameRequest(id).subscribe((_) => {
+      this.success = true;
+      this.alert = 'Game request sent successfully';
+    }, (_) => {
+      this.success = false;
+      this.alert = 'Error while sending game request';
+    });
+    ;
   }
 }

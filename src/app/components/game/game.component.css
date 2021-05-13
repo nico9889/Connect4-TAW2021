@@ -1,10 +1,14 @@
 div.chat-box {
-  position: relative;
   padding: 10px;
   border-style: groove;
   border-color: #ea39b8;
   border-radius: 25px;
   background: #6f42c1;
-  height: 80vh;
+  height: 100%;
   width: 100%;
+}
+
+canvas {
+  border-style: groove;
+  border-radius: 25px;
 }

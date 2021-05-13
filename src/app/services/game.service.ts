@@ -1,26 +1,23 @@
 import {Injectable} from '@angular/core';
+import {Notification} from '../models/Notification';
+import {Observable, throwError} from 'rxjs';
+import {catchError} from 'rxjs/operators';
 import {HttpClient, HttpErrorResponse, HttpHeaders, HttpParams} from '@angular/common/http';
 import {UserBasicAuthService} from './user-basic-auth.service';
-import {catchError, tap} from 'rxjs/operators';
-import {Observable, throwError} from 'rxjs';
-import {Message} from '../models/Message';
-import {Status} from '../models/Status';
+import {Game} from '../models/Game';
+import {GameInfo} from '../models/GameInfo';
 
 @Injectable({
   providedIn: 'root'
 })
-export class ChatService {
-
-  constructor(private http: HttpClient, private us: UserBasicAuthService) {
+export class GameService {
+  constructor(private us: UserBasicAuthService, private http: HttpClient) {
   }
 
   private handleError(error: HttpErrorResponse): Observable<never> {
     if (error.error instanceof ErrorEvent) {
-      // A client-side or network error occurred. Handle it accordingly.
       console.error('An error occurred:', error.error.message);
     } else {
-      // The backend returned an unsuccessful response code.
-      // The response body may contain clues as to what went wrong,
       console.error(
         `Backend returned code ${error.status}, ` +
         'body was: ' + JSON.stringify(error.error));
@@ -40,9 +37,8 @@ export class ChatService {
     };
   }
 
-  getUserChat(id: string): Observable<Message[]> {
-    return this.http.get<Message[]>(this.us.url + '/v1/messages/' + id, this.createOptions({})).pipe(
-      tap((data) => console.log(JSON.stringify(data))),
+  respondGameRequest(notification: Notification, accept: boolean): Observable<Game> {
+    return this.http.put<Game>(this.us.url + '/v1/game/invite', {notification, accept}, this.createOptions({})).pipe(
       catchError((error) => {
         this.handleError(error);
         return throwError(error);
@@ -50,9 +46,17 @@ export class ChatService {
     );
   }
 
-  sendUserChat(content: string, receiver: string): Observable<Status> {
-    return this.http.post<Status>(this.us.url + '/v1/messages/' + receiver, {message: {content}}, this.createOptions({})).pipe(
-      tap((data) => console.log(JSON.stringify(data))),
+  getGameInfo(id: string): Observable<GameInfo> {
+    return this.http.get<GameInfo>(this.us.url + '/v1/game/' + id, this.createOptions({})).pipe(
+      catchError((error) => {
+        this.handleError(error);
+        return throwError(error);
+      })
+    );
+  }
+
+  sendMove(id: number, pos: number): Observable<GameInfo> {
+    return this.http.put<GameInfo>(this.us.url + '/v1/game/' + id, {x: pos}, this.createOptions({})).pipe(
       catchError((error) => {
         this.handleError(error);
         return throwError(error);

@@ -15,12 +15,17 @@ export class SocketioService {
   }
 
   connect(): void {
-    console.log('Connecting socket');
     this.socket = io(this.us.url, {
       auth: {token: 'Bearer ' + this.us.getToken()}
     });
-    this.socket.onAny( (m) => {
+    this.socket.onAny((m) => {
       console.log(m);
     });
+  }
+
+  disconnect(): void {
+    if (this.socket.connected) {
+      this.socket.disconnect();
+    }
   }
 }

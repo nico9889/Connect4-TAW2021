@@ -11,7 +11,7 @@ import {SocketioService} from '../../services/socketio.service';
 export class LoginComponent implements OnInit {
   public errMessage = undefined;
 
-  constructor(private us: UserBasicAuthService, private router: Router) {
+  constructor(private us: UserBasicAuthService, private socket: SocketioService, private router: Router) {
   }
 
   ngOnInit(): void {

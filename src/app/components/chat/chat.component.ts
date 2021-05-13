@@ -55,7 +55,7 @@ export class ChatComponent implements OnInit, AfterViewChecked {
   sendMessage(message: HTMLInputElement): void {
     if (message.value !== '') {
       this.chat.sendUserChat(message.value, this.user.id).subscribe((_) => {
-        this.messages.push({sender: this.us.getId(), receiver: this.user.id, content:message.value, datetime: new Date()});
+        this.messages.push({sender: this.us.getId(), receiver: this.user.id, content: message.value, datetime: new Date()});
         message.value = '';
         message.focus();
       });

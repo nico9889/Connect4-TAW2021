@@ -85,7 +85,7 @@ export class UserHttpService {
   }
 
   sendFriendRequest(username: string): Observable<Status> {
-    return this.http.post<Status>(this.us.url + '/v1/friendship/' + username, {request: true}, this.createOptions({})).pipe(
+    return this.http.post<Status>(this.us.url + '/v1/friendship/', {username, request: true}, this.createOptions({})).pipe(
       catchError((error) => {
         this.handleError(error);
         return throwError(error);
@@ -102,7 +102,16 @@ export class UserHttpService {
     );
   }
 
-  getFriends(): Observable<Friend[]>{
+  sendGameRequest(id: string): Observable<Status> {
+    return this.http.post<Status>(this.us.url + '/v1/game/invite/', {id, request: true}, this.createOptions({})).pipe(
+      catchError((error) => {
+        this.handleError(error);
+        return throwError(error);
+      })
+    );
+  }
+
+  getFriends(): Observable<Friend[]> {
     return this.http.get<Friend[]>(this.us.url + '/v1/friendship/', this.createOptions({})).pipe(
       catchError((error) => {
         this.handleError(error);

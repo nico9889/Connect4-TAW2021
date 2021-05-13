@@ -20,6 +20,7 @@ import {NotificationService} from "./services/notification.service";
 import {SocketioService} from "./services/socketio.service";
 import { ChatComponent } from './components/chat/chat.component';
 import {ChatService} from "./services/chat.service";
+import { GameComponent } from './components/game/game.component';
 
 @NgModule({
   declarations: [
@@ -31,7 +32,8 @@ import {ChatService} from "./services/chat.service";
     UsersComponent,
     UserComponent,
     LeaderboardComponent,
-    ChatComponent
+    ChatComponent,
+    GameComponent
   ],
   imports: [
     AppRoutingModule,
