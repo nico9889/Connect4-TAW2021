@@ -1,12 +1,13 @@
 export enum Type {
   ERROR,
   FRIEND_REQUEST,
-  GAME_INVITE
+  GAME_INVITE,
+  PRIVATE_MESSAGE
 }
 
 export interface Notification{
   type: Type;
   senderUsername: string;
-  senderId: string;
+  sender: string;
   expiry: Date;
 }

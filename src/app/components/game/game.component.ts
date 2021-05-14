@@ -32,7 +32,7 @@ export class GameComponent implements OnInit, AfterViewChecked, AfterViewInit {
 
   private drawBoard(): void {
     const ctx = this.canvas.nativeElement.getContext('2d');
-    ctx.fillStyle = '#0069ff';
+    ctx.fillStyle = '#5070FF';
     ctx.fillRect(0, 0, this.canvas.nativeElement.width, this.canvas.nativeElement.height);
     this.cellX = ((this.canvas.nativeElement.width - 50) / 7);
     const cellY = ((this.canvas.nativeElement.height - 50) / 6);
@@ -48,7 +48,7 @@ export class GameComponent implements OnInit, AfterViewChecked, AfterViewInit {
           posY += (cellY);
           switch (this.gameInfo.board.board[y][x]) {
             case 1:
-              ctx.fillStyle = '#FF0000';
+              ctx.fillStyle = '#FF0050';
               break;
             case 2:
               ctx.fillStyle = '#FFDB00';

@@ -69,11 +69,11 @@ export class AppComponent implements OnInit {
 
   private getNotifications(): void {
     this.ns.getNotifications().subscribe((notifications) => {
-      this.notifications = notifications;
+      this.notifications = notifications.concat(this.notifications);
     }, (err) => {
       console.error(err);
       this.notifications = [];
-      this.notifications.push({type: Type.ERROR, senderId: '0', senderUsername: 'SYSTEM', expiry: new Date()});
+      this.notifications.push({type: Type.ERROR, sender: '0', senderUsername: 'SYSTEM', expiry: new Date()});
     });
   }
 
@@ -104,6 +104,10 @@ export class AppComponent implements OnInit {
           this.router.navigate(['/game/' + game._id]);
           console.log(game);
         });
+        break;
+      case Type.PRIVATE_MESSAGE:
+        console.log(notification);
+        this.router.navigate(['/chat/' + notification.sender]);
         break;
     }
   }
@@ -148,6 +152,5 @@ export class AppComponent implements OnInit {
       this.success = false;
       this.alert = 'Error while sending game request';
     });
-    ;
   }
 }

@@ -12,4 +12,6 @@ export interface User{
 export interface LeaderboardUser{
   username: string;
   ratio: number;
+  victories: number;
+  defeats: number;
 }

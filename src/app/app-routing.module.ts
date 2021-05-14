@@ -6,7 +6,7 @@ import {RegisterComponent} from './components/register/register.component';
 import {UsersComponent} from './components/users/users.component';
 import {UserComponent} from './components/user/user.component';
 import {ChatComponent} from './components/chat/chat.component';
-import {GameComponent} from "./components/game/game.component";
+import {GameComponent} from './components/game/game.component';
 
 const routes: Routes = [
   { path: '', component: HomepageComponent },

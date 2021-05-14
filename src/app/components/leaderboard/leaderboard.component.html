@@ -6,12 +6,16 @@
     <tr>
       <th>Position</th>
       <th>User</th>
+      <th>Victories</th>
+      <th>Defeats</th>
     </tr>
     </thead>
     <tbody>
     <tr *ngFor="let user of leaderboard, let i=index">
       <th>{{i+1}}</th>
       <th>{{user.username}}</th>
+      <th>{{user.victories}}</th>
+      <th>{{user.defeats}}</th>
     </tr>
     </tbody>
   </table>

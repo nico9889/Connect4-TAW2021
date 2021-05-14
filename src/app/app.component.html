@@ -100,11 +100,12 @@
   <div class="offcanvas-body">
     <div *ngFor="let notification of notifications"
          [ngClass]="(notification.type.valueOf()!=0)? 'card border-info m-2':'card border-danger m-2'">
-      <h5 class="card-title m-3">{{notification.senderUsername}}</h5>
+      <h5 class="card-title mt-3 ms-3">{{notification.senderUsername}}</h5>
+        <h6 class="card-subtitle ms-3" *ngIf="notification.type==0">An error has occurred while retrieving the notifications</h6>
+        <h6 class="card-subtitle ms-3" *ngIf="notification.type==1">Sent you a new friend request!</h6>
+        <h6 class="card-subtitle ms-3" *ngIf="notification.type==2">Sent you a new game request!</h6>
+        <h6 class="card-subtitle ms-3" *ngIf="notification.type==3">Sent you a new private message!</h6>
       <div class="card-body">
-        <p class="card-text" *ngIf="notification.type==0">An error has occurred while retrieving the notifications</p>
-        <p class="card-text" *ngIf="notification.type==1">Sent you a new friend request!</p>
-        <p class="card-text" *ngIf="notification.type==2">Sent you a new game request!</p>
         <a class="btn btn-success btn-sm" (click)="acceptNotification(notification)"><i class="bi bi-check"></i>
           Accept</a>
         <a class="btn btn-danger btn-sm" (click)="denyNotification(notification)"><i class="bi bi-x"></i> Refuse</a>
