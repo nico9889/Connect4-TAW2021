@@ -19,11 +19,15 @@ export class GameComponent implements OnInit, AfterViewChecked, AfterViewInit, O
   private usernames: Map<string, string> = new Map();
   private cellX: number;
   private id;
+  private audio: HTMLAudioElement;
   gameInfo: GameInfo;
   us: UserBasicAuthService;
   messages: Message[];
 
   constructor(us: UserBasicAuthService, private game: GameService, private route: ActivatedRoute, private socket: SocketioService) {
+    this.audio = new Audio();
+    this.audio.src = '../../../assets/sounds/notification.ogg';
+    this.audio.load();
     this.us = us;
     this.messages = [];
   }
@@ -32,6 +36,7 @@ export class GameComponent implements OnInit, AfterViewChecked, AfterViewInit, O
     this.id = this.route.snapshot.paramMap.get('id');
     this.socket.socket.on('game update', (_) => {
       this.getGameInfo();
+      this.audio.play();
     });
     this.socket.socket.on('game message new', (_) => {
       this.getMessage();
