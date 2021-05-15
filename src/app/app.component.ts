@@ -29,8 +29,7 @@ export class AppComponent implements OnInit {
               private socket: SocketioService,
               private router: Router
   ) {
-    this.audio = new Audio();
-    this.audio.src = '../../../assets/sounds/notification.ogg';
+    this.audio = new Audio('assets/sounds/notification.ogg');
     this.audio.load();
     this.us = us;
     this.us.logged.subscribe((logged) => {

@@ -25,8 +25,7 @@ export class GameComponent implements OnInit, AfterViewChecked, AfterViewInit, O
   messages: Message[];
 
   constructor(us: UserBasicAuthService, private game: GameService, private route: ActivatedRoute, private socket: SocketioService) {
-    this.audio = new Audio();
-    this.audio.src = '../../../assets/sounds/notification.ogg';
+    this.audio = new Audio('assets/sounds/slide.ogg');
     this.audio.load();
     this.us = us;
     this.messages = [];
