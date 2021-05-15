@@ -9,12 +9,14 @@
         </p>
       </div>
     </div>
-    <div class="input-group mt-3">
-      <input type="text" #messagetxt id="inputMessage" class="form-control" placeholder="Message"
-             aria-describedby="send-button">
-      <button class="btn btn-primary" (click)="sendMessage(messagetxt)" id="send-button">
-        <i class="bi bi-arrow-up-circle"></i> Send
-      </button>
-    </div>
+    <form class="vw-100">
+      <div class="input-group mt-3">
+        <input type="text" #messagetxt id="inputMessage" class="form-control" placeholder="Message"
+               aria-describedby="send-button">
+        <button class="btn btn-primary" (click)="sendMessage(messagetxt)" id="send-button">
+          <i class="bi bi-arrow-up-circle"></i> Send
+        </button>
+      </div>
+    </form>
   </div>
 </div>
