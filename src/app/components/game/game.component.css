@@ -4,7 +4,8 @@ div.chat-box {
   border-color: #ea39b8;
   border-radius: 25px;
   background: #6f42c1;
-  height: 100%;
+  overflow-scrolling: auto;
+  height: 60vh;;
   width: 100%;
 }
 

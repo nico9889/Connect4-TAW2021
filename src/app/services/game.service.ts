@@ -7,6 +7,8 @@ import {UserBasicAuthService} from './user-basic-auth.service';
 import {Game} from '../models/Game';
 import {GameInfo} from '../models/GameInfo';
 import {Status} from '../models/Status';
+import {Message} from "../models/Message";
+import {Spectator} from "../models/Spectator";
 
 @Injectable({
   providedIn: 'root'
@@ -68,6 +70,33 @@ export class GameService {
   sendSpectate(id: string, spectate: boolean): Observable<Status> {
     console.log(spectate);
     return this.http.put<Status>(this.us.url + '/v1/game/' + id + '/spectate', {follow: spectate}, this.createOptions({})).pipe(
+      catchError((error) => {
+        this.handleError(error);
+        return throwError(error);
+      })
+    );
+  }
+
+  sendMessage(id: string, message: string): Observable<Status>{
+    return this.http.post<Status>(this.us.url + '/v1/game/' + id + '/messages', {message}, this.createOptions({})).pipe(
+      catchError((error) => {
+        this.handleError(error);
+        return throwError(error);
+      })
+    );
+  }
+
+  getMessage(id: string): Observable<Message[]>{
+    return this.http.get<Message[]>(this.us.url + '/v1/game/' + id + '/messages', this.createOptions({})).pipe(
+      catchError((error) => {
+        this.handleError(error);
+        return throwError(error);
+      })
+    );
+  }
+
+  getUsers(id: string): Observable<Spectator[]>{
+    return this.http.get<Spectator[]>(this.us.url + '/v1/game/' + id + '/users', this.createOptions({})).pipe(
       catchError((error) => {
         this.handleError(error);
         return throwError(error);

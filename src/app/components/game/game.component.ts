@@ -15,6 +15,8 @@ export class GameComponent implements OnInit, AfterViewChecked, AfterViewInit, O
   // @ViewChild('chatbox') chatbox;
   @ViewChild('gamecontainer') container;
   @ViewChild('gamecanvas') canvas;
+  @ViewChild('chatbox') chatbox;
+  private usernames: Map<string, string> = new Map();
   private cellX: number;
   private id;
   gameInfo: GameInfo;
@@ -24,19 +26,26 @@ export class GameComponent implements OnInit, AfterViewChecked, AfterViewInit, O
   constructor(us: UserBasicAuthService, private game: GameService, private route: ActivatedRoute, private socket: SocketioService) {
     this.us = us;
     this.messages = [];
-    this.id = this.route.snapshot.paramMap.get('id');
-    socket.socket.on('game update', (_) => {
-      this.getGameInfo();
-    });
   }
 
   ngOnInit(): void {
+    this.id = this.route.snapshot.paramMap.get('id');
+    this.socket.socket.on('game update', (_) => {
+      this.getGameInfo();
+    });
+    this.socket.socket.on('game message new', (_) => {
+      this.getMessage();
+    });
+    this.socket.socket.on('game user new', (_) => {
+      this.getUsers();
+    });
     this.getGameInfo();
     this.game.sendSpectate(this.id, true).subscribe();
   }
 
   ngOnDestroy(): void {
     this.socket.socket.off('game update');
+    this.socket.socket.off('game message new');
     this.game.sendSpectate(this.id, false).subscribe();
   }
 
@@ -112,12 +121,31 @@ export class GameComponent implements OnInit, AfterViewChecked, AfterViewInit, O
   }
 
   ngAfterViewChecked(): void {
-    /*
     this.chatbox.nativeElement.scrollTop = this.chatbox.nativeElement.scrollHeight;
-     */
   }
 
-  sendMessage(messagetxt: HTMLInputElement): void {
+  private getMessage(): void {
+    this.game.getMessage(this.id).subscribe((messages) => {
+      this.messages = messages;
+    });
+  }
 
+  sendMessage(message: HTMLInputElement): void {
+    this.game.sendMessage(this.id, message.value).subscribe((_) => {
+      message.focus();
+      message.value = '';
+    });
+  }
+
+  private getUsers(): void {
+    this.game.getUsers(this.route.snapshot.paramMap.get('id')).subscribe((users) => {
+      users.forEach((user) => {
+        this.usernames.set(user._id, user.username);
+      });
+    });
+  }
+
+  getUsername(sender: string): string {
+    return this.usernames.get(sender) || 'Anonymous';
   }
 }

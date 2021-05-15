@@ -1,5 +1,5 @@
 export interface Friend{
-  id: string;
+  readonly id: string;
   username: string;
   online: boolean;
   game: string;
