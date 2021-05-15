@@ -10,7 +10,7 @@
       <div class="collapse navbar-collapse" id="mainNavBar">
         <ul class="navbar-nav me-auto">
           <li class="nav-item">
-            <a class="nav-link" href=""><i class="bi bi-house"></i> Home</a>
+            <a class="nav-link" routerLink="/"><i class="bi bi-house"></i> Home</a>
           </li>
           <li *ngIf="us.hasRole('MODERATOR')">
             <a class="nav-link" routerLink="/users"><i class="bi bi-person-lines-fill"></i> Users</a>
@@ -79,7 +79,7 @@
           <a routerLink="/chat/{{friend.id}}"><i class="bi bi-chat-dots mx-2" style="font-size: 2rem;"></i></a>
           <a role="button" (click)="sendGameRequest(friend.id)"><i class="bi bi-joystick mx-2"
                                                                    style="font-size: 2rem;"></i></a>
-          <a href=""><i [ngClass]="(friend.online)?'bi bi-eye mx-2':'bi bi-eye-slash mx-2'"
+          <a routerLink="/game/{{friend.game}}"><i [ngClass]="(friend.online)?'bi bi-eye mx-2':'bi bi-eye-slash mx-2'"
                         style="font-size: 2rem;"></i></a>
         </div>
       </div>

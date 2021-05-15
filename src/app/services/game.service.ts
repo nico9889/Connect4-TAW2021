@@ -6,6 +6,7 @@ import {HttpClient, HttpErrorResponse, HttpHeaders, HttpParams} from '@angular/c
 import {UserBasicAuthService} from './user-basic-auth.service';
 import {Game} from '../models/Game';
 import {GameInfo} from '../models/GameInfo';
+import {Status} from '../models/Status';
 
 @Injectable({
   providedIn: 'root'
@@ -57,6 +58,16 @@ export class GameService {
 
   sendMove(id: number, pos: number): Observable<GameInfo> {
     return this.http.put<GameInfo>(this.us.url + '/v1/game/' + id, {x: pos}, this.createOptions({})).pipe(
+      catchError((error) => {
+        this.handleError(error);
+        return throwError(error);
+      })
+    );
+  }
+
+  sendSpectate(id: string, spectate: boolean): Observable<Status> {
+    console.log(spectate);
+    return this.http.put<Status>(this.us.url + '/v1/game/' + id + '/spectate', {follow: spectate}, this.createOptions({})).pipe(
       catchError((error) => {
         this.handleError(error);
         return throwError(error);

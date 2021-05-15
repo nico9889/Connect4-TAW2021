@@ -73,7 +73,7 @@ export class AppComponent implements OnInit {
     }, (err) => {
       console.error(err);
       this.notifications = [];
-      this.notifications.push({type: Type.ERROR, sender: '0', senderUsername: 'SYSTEM', expiry: new Date()});
+      this.notifications.push({uid: '0', type: Type.ERROR, sender: '0', senderUsername: 'SYSTEM', expiry: new Date()});
     });
   }
 

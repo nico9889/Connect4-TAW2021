@@ -6,6 +6,7 @@ export enum Type {
 }
 
 export interface Notification{
+  uid: string;
   type: Type;
   senderUsername: string;
   sender: string;

@@ -1,4 +1,4 @@
-import {AfterViewChecked, AfterViewInit, Component, HostListener, OnInit, ViewChild} from '@angular/core';
+import {AfterViewChecked, AfterViewInit, Component, HostListener, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import {UserBasicAuthService} from '../../services/user-basic-auth.service';
 import {Message} from '../../models/Message';
 import {GameService} from '../../services/game.service';
@@ -11,7 +11,7 @@ import {SocketioService} from '../../services/socketio.service';
   templateUrl: './game.component.html',
   styleUrls: ['./game.component.css']
 })
-export class GameComponent implements OnInit, AfterViewChecked, AfterViewInit {
+export class GameComponent implements OnInit, AfterViewChecked, AfterViewInit, OnDestroy {
   // @ViewChild('chatbox') chatbox;
   @ViewChild('gamecontainer') container;
   @ViewChild('gamecanvas') canvas;
@@ -28,6 +28,16 @@ export class GameComponent implements OnInit, AfterViewChecked, AfterViewInit {
     socket.socket.on('game update', (_) => {
       this.getGameInfo();
     });
+  }
+
+  ngOnInit(): void {
+    this.getGameInfo();
+    this.game.sendSpectate(this.id, true).subscribe();
+  }
+
+  ngOnDestroy(): void {
+    this.socket.socket.off('game update');
+    this.game.sendSpectate(this.id, false).subscribe();
   }
 
   private drawBoard(): void {
@@ -73,11 +83,8 @@ export class GameComponent implements OnInit, AfterViewChecked, AfterViewInit {
     });
   }
 
-  ngOnInit(): void {
-    this.getGameInfo();
-  }
 
-  private resize(): void{
+  private resize(): void {
     this.canvas.nativeElement.width = this.container.nativeElement.clientWidth * 0.90;
     this.canvas.nativeElement.height = this.canvas.nativeElement.clientWidth * 0.5;
   }
