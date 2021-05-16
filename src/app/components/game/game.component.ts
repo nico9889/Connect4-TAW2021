@@ -12,7 +12,6 @@ import {SocketioService} from '../../services/socketio.service';
   styleUrls: ['./game.component.css']
 })
 export class GameComponent implements OnInit, AfterViewChecked, AfterViewInit, OnDestroy {
-  // @ViewChild('chatbox') chatbox;
   @ViewChild('gamecontainer') container;
   @ViewChild('gamecanvas') canvas;
   @ViewChild('chatbox') chatbox;
@@ -32,7 +31,11 @@ export class GameComponent implements OnInit, AfterViewChecked, AfterViewInit, O
   }
 
   ngOnInit(): void {
-    this.id = this.route.snapshot.paramMap.get('id');
+    this.route.paramMap.subscribe((queryParams) => {
+      this.id = queryParams.get('id');
+      this.getGameInfo();
+      this.game.sendSpectate(this.id, true).subscribe();
+    });
     this.socket.socket.on('game update', (_) => {
       this.getGameInfo();
       this.audio.play();
@@ -43,14 +46,13 @@ export class GameComponent implements OnInit, AfterViewChecked, AfterViewInit, O
     this.socket.socket.on('game user new', (_) => {
       this.getUsers();
     });
-    this.getGameInfo();
-    this.game.sendSpectate(this.id, true).subscribe();
   }
 
   ngOnDestroy(): void {
     this.socket.socket.off('game update');
     this.socket.socket.off('game message new');
     this.game.sendSpectate(this.id, false).subscribe();
+    this.route.paramMap
   }
 
   private drawBoard(): void {

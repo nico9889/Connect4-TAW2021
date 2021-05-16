@@ -17,19 +17,12 @@ export class ChatComponent implements OnInit, AfterViewChecked {
   user: Friend;
   messages: Message[];
   @ViewChild('chatbox') chatbox;
-
+  private id;
   constructor(private chat: ChatService, private route: ActivatedRoute,
               us: UserBasicAuthService,
-              users: UserHttpService,
+              public users: UserHttpService,
               private socket: SocketioService,
-              private router: Router) {
-    const id = this.route.snapshot.paramMap.get('id');
-    users.getFriend(id).subscribe((user) => {
-      this.user = user;
-    }, (err) => {
-      console.error(err);
-      router.navigate(['/']);
-    });
+              public router: Router) {
     socket.socket.on('private message', (m) => {
       console.log(m);
       if (m.from === this.user.id) {
@@ -40,12 +33,20 @@ export class ChatComponent implements OnInit, AfterViewChecked {
   }
 
   ngOnInit(): void {
-    this.getMessages();
+    this.route.paramMap.subscribe((params) => {
+      this.id = params.get('id');
+      this.getMessages();
+      this.users.getFriend(this.id).subscribe((user) => {
+        this.user = user;
+      }, (err) => {
+        console.error(err);
+        this.router.navigate(['/']);
+      });
+    });
   }
 
   private getMessages(): void {
-    const id = this.route.snapshot.paramMap.get('id');
-    this.chat.getUserChat(id).subscribe((messages) => {
+    this.chat.getUserChat(this.id).subscribe((messages) => {
       this.messages = messages;
     }, (err) => {
       console.log(err);

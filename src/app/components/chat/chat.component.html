@@ -2,7 +2,7 @@
   <div class="input-group mb-3">
     <div class="chat-box overflow-auto" #chatbox>
       <div *ngFor="let message of messages" [ngClass]="(message.sender === us.getId()) ? 'card text-end': 'card'">
-        <h6 class="card-title ms-3 mt-3">{{(message.sender === us.getId()) ? us.getUsername() : user.username}}</h6>
+        <h6 class="card-title ms-3 mt-3">{{(message.sender === us.getId()) ? us.getUsername() : user?.username}}</h6>
         <h6 class="card-subtitle ms-3 text-muted">{{message.datetime}}</h6>
         <p class="card-body">
           {{message.content}}

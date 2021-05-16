@@ -20,11 +20,12 @@ export class UserComponent implements OnInit {
   }
 
   private getUser(): void {
-    const id = this.route.snapshot.paramMap.get('id');
-    this.users.getUser(id).subscribe((user) => {
-      this.user = user;
-    }, (_) => {
-      this.router.navigate(['/']);
+    this.route.queryParams.subscribe((queryParams) => {
+      this.users.getUser(queryParams.id).subscribe((user) => {
+        this.user = user;
+      }, (_) => {
+        this.router.navigate(['/']);
+      });
     });
   }
 
