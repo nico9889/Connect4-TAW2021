@@ -1,5 +1,5 @@
 import {Injectable, EventEmitter, Output} from '@angular/core';
-import {HttpClient, HttpHeaders} from '@angular/common/http';
+import {HttpClient, HttpHeaders, HttpParams} from '@angular/common/http';
 import {tap} from 'rxjs/operators';
 import {Observable} from 'rxjs';
 import jwtDecode from 'jwt-decode';
@@ -9,6 +9,8 @@ interface TokenData {
   roles: string[];
   id: string;
   enabled: boolean;
+  last_password_change: Date;
+  registered_on: Date;
   exp: number;
 }
 
@@ -30,6 +32,18 @@ export class UserBasicAuthService {
     } else {
       console.log('JWT loaded from local storage.');
     }
+  }
+
+  // tslint:disable-next-line: typedef
+  public createOptions(params = {}) {
+    return {
+      headers: new HttpHeaders({
+        authorization: 'Bearer ' + this.getToken(),
+        'cache-control': 'no-cache',
+        'Content-Type': 'application/json',
+      }),
+      params: new HttpParams({fromObject: params})
+    };
   }
 
   login(username: string, password: string): Observable<any> {
@@ -69,14 +83,16 @@ export class UserBasicAuthService {
   }
 
   register(user): Observable<any> {
-    const options = {
+    const options = (user.moderator) ? this.createOptions() : {
       headers: new HttpHeaders({
         'cache-control': 'no-cache',
         'Content-Type': 'application/json',
       })
     };
 
-    return this.http.post(this.url + '/v1/register', user, options).pipe(
+    const endpoint = (user.moderator) ? '/v1/moderator/register' : '/v1/register';
+
+    return this.http.post(this.url + endpoint, user, options).pipe(
       tap((data) => {
         console.log(JSON.stringify(data));
       })
@@ -119,5 +135,10 @@ export class UserBasicAuthService {
     } else {
       return false;
     }
+  }
+
+  enabled(): boolean {
+    return !this.hasRole('MODERATOR') ||
+      (jwtDecode(this.token) as TokenData).last_password_change !== (jwtDecode(this.token) as TokenData).registered_on;
   }
 }

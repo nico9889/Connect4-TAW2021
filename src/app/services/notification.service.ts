@@ -26,20 +26,8 @@ export class NotificationService {
     return throwError('Something bad happened; please try again later.');
   }
 
-  // tslint:disable-next-line: typedef
-  private createOptions(params = {}) {
-    return {
-      headers: new HttpHeaders({
-        authorization: 'Bearer ' + this.us.getToken(),
-        'cache-control': 'no-cache',
-        'Content-Type': 'application/json',
-      }),
-      params: new HttpParams({fromObject: params})
-    };
-  }
-
   getNotifications(): Observable<Notification[]> {
-    return this.http.get<Notification[]>(this.us.url + '/v1/notifications', this.createOptions({})).pipe(
+    return this.http.get<Notification[]>(this.us.url + '/v1/notifications', this.us.createOptions({})).pipe(
       tap((data) => console.log(JSON.stringify(data))),
       catchError((error) => {
         this.handleError(error);

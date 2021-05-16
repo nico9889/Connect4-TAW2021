@@ -12,8 +12,7 @@ import {UserHttpService} from '../../services/user-http.service';
 export class HomepageComponent implements OnInit {
   user: User = null;
 
-  constructor(private us: UserBasicAuthService, private users: UserHttpService, private router: Router) {
-    this.user;
+  constructor(public us: UserBasicAuthService, private users: UserHttpService, private router: Router) {
     if (us.isLoggedIn()) {
       users.getUser(us.getId()).subscribe((user) => {
         console.log(user);

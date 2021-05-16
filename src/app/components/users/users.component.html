@@ -1,4 +1,6 @@
-<table class="table table-primary table-sm">
+<a role="button" class="btn btn-info" routerLink="/register">Register new user</a>
+
+<table class="table table-primary table-sm mt-2">
   <thead class="table-dark">
   <tr>
     <th scope="col">Username</th>
@@ -10,7 +12,7 @@
   <tr *ngFor="let user of users">
     <th scope="row">{{user.username}}</th>
     <th>{{user.enabled ? 'Enabled' : 'Disabled'}}</th>
-    <th><a routerLink="/users/{{user._id}}" class="btn btn-secondary" role="button"><i class="bi bi-pen"></i> Manage</a> </th>
+    <th><a [routerLink]="['/users/',user._id]" class="btn btn-secondary" role="button"><i class="bi bi-pen"></i> Manage</a> </th>
   </tr>
   </tbody>
 </table>

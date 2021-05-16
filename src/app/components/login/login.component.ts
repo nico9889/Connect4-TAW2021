@@ -16,7 +16,11 @@ export class LoginComponent implements OnInit {
 
   ngOnInit(): void {
     if (this.us.isLoggedIn()) {
-      this.router.navigate(['/']);
+      if (this.us.enabled()) {
+        this.router.navigate(['/']);
+      }else{
+        this.router.navigate(['/users' + this.us.getId()]);
+      }
     }
   }
 

@@ -20,6 +20,7 @@
 
   </div>
   <div class="col">
+    <div class="alert alert-danger" *ngIf="!us.enabled()">Please change your password</div>
     <h3 class="mt-3">Change password</h3>
     <div class="form-group mb-3">
       <label for="inputOldPassword" class="sr-only">Old password</label>

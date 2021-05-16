@@ -31,21 +31,8 @@ export class UserHttpService {
     return throwError('Something bad happened; please try again later.');
   }
 
-  // tslint:disable-next-line: typedef
-  private createOptions(params = {}) {
-    return {
-      headers: new HttpHeaders({
-        authorization: 'Bearer ' + this.us.getToken(),
-        'cache-control': 'no-cache',
-        'Content-Type': 'application/json',
-      }),
-      params: new HttpParams({fromObject: params})
-    };
-
-  }
-
   getUsers(): Observable<User[]> {
-    return this.http.get<User[]>(this.us.url + '/v1/users', this.createOptions({})).pipe(
+    return this.http.get<User[]>(this.us.url + '/v1/users', this.us.createOptions({})).pipe(
       tap((data) => console.log(JSON.stringify(data))),
       catchError((error) => {
         this.handleError(error);
@@ -55,7 +42,7 @@ export class UserHttpService {
   }
 
   getUser(id: string): Observable<User> {
-    return this.http.get<User>(this.us.url + '/v1/users/' + id, this.createOptions({})).pipe(
+    return this.http.get<User>(this.us.url + '/v1/users/' + id, this.us.createOptions({})).pipe(
       tap((data) => console.log(JSON.stringify(data))),
       catchError((error) => {
         this.handleError(error);
@@ -66,7 +53,7 @@ export class UserHttpService {
 
   // tslint:disable-next-line:max-line-length
   editUser(id: string, data: { username?: string, enabled?: boolean, avatar?: string, newPassword?: string, oldPassword?: string }): Observable<Status> {
-    return this.http.put<Status>(this.us.url + '/v1/users/' + id, data, this.createOptions({})).pipe(
+    return this.http.put<Status>(this.us.url + '/v1/users/' + id, data, this.us.createOptions({})).pipe(
       catchError((error) => {
         this.handleError(error);
         return throwError(error);
@@ -75,7 +62,7 @@ export class UserHttpService {
   }
 
   getLeaderboard(): Observable<LeaderboardUser[]> {
-    return this.http.get<LeaderboardUser[]>(this.us.url + '/v1/leaderboard', this.createOptions({})).pipe(
+    return this.http.get<LeaderboardUser[]>(this.us.url + '/v1/leaderboard', this.us.createOptions({})).pipe(
       tap((data) => console.log(JSON.stringify(data))),
       catchError((error) => {
         this.handleError(error);
@@ -85,7 +72,7 @@ export class UserHttpService {
   }
 
   sendFriendRequest(username: string): Observable<Status> {
-    return this.http.post<Status>(this.us.url + '/v1/friendship/', {username, request: true}, this.createOptions({})).pipe(
+    return this.http.post<Status>(this.us.url + '/v1/friendship/', {username, request: true}, this.us.createOptions({})).pipe(
       catchError((error) => {
         this.handleError(error);
         return throwError(error);
@@ -94,7 +81,7 @@ export class UserHttpService {
   }
 
   respondFriendRequest(notification: Notification, accept: boolean): Observable<Status> {
-    return this.http.put<Status>(this.us.url + '/v1/friendship/', {notification, accept}, this.createOptions({})).pipe(
+    return this.http.put<Status>(this.us.url + '/v1/friendship/', {notification, accept}, this.us.createOptions({})).pipe(
       catchError((error) => {
         this.handleError(error);
         return throwError(error);
@@ -103,7 +90,7 @@ export class UserHttpService {
   }
 
   sendGameRequest(id: string): Observable<Status> {
-    return this.http.post<Status>(this.us.url + '/v1/game/invite/', {id, request: true}, this.createOptions({})).pipe(
+    return this.http.post<Status>(this.us.url + '/v1/game/invite/', {id, request: true}, this.us.createOptions({})).pipe(
       catchError((error) => {
         this.handleError(error);
         return throwError(error);
@@ -112,7 +99,7 @@ export class UserHttpService {
   }
 
   getFriends(): Observable<Friend[]> {
-    return this.http.get<Friend[]>(this.us.url + '/v1/friendship/', this.createOptions({})).pipe(
+    return this.http.get<Friend[]>(this.us.url + '/v1/friendship/', this.us.createOptions({})).pipe(
       catchError((error) => {
         this.handleError(error);
         return throwError(error);
@@ -121,7 +108,7 @@ export class UserHttpService {
   }
 
   getFriend(id: string): Observable<Friend> {
-    return this.http.get<Friend>(this.us.url + '/v1/friendship/' + id, this.createOptions({})).pipe(
+    return this.http.get<Friend>(this.us.url + '/v1/friendship/' + id, this.us.createOptions({})).pipe(
       tap((data) => console.log(JSON.stringify(data))),
       catchError((error) => {
         this.handleError(error);

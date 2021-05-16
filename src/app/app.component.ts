@@ -44,6 +44,7 @@ export class AppComponent implements OnInit {
   private load(): void {
     this.socket.connect();
     this.getFriends();
+
     this.socket.socket.on('friend update', () => {
       this.getFriends();
     });
@@ -60,6 +61,9 @@ export class AppComponent implements OnInit {
 
   ngOnInit(): void {
     if (this.us.isLoggedIn()) {
+      if (!this.us.enabled()) {
+        this.router.navigate(['/users/' + this.us.getId()]);
+      }
       this.load();
     } else {
       this.socket.disconnect();
@@ -77,7 +81,9 @@ export class AppComponent implements OnInit {
   }
 
   private getFriends(): void {
+    console.log('Getting friends');
     this.users.getFriends().subscribe((friends) => {
+      console.log(friends);
       this.friends = friends;
     });
   }
@@ -100,13 +106,12 @@ export class AppComponent implements OnInit {
         break;
       case Type.GAME_INVITE:
         this.games.respondGameRequest(notification, true).subscribe((game) => {
-          this.router.navigate(['/game/' + game._id]);
-          console.log(game);
+          this.router.navigate(['/game/', game._id]);
         });
         break;
       case Type.PRIVATE_MESSAGE:
         console.log(notification);
-        this.router.navigate(['/chat/' + notification.sender]);
+        this.router.navigate(['/chat/', notification.sender]);
         break;
     }
   }

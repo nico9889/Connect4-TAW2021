@@ -28,20 +28,8 @@ export class GameService {
     return throwError('Something bad happened; please try again later.');
   }
 
-  // tslint:disable-next-line:typedef
-  private createOptions(params = {}) {
-    return {
-      headers: new HttpHeaders({
-        authorization: 'Bearer ' + this.us.getToken(),
-        'cache-control': 'no-cache',
-        'Content-Type': 'application/json',
-      }),
-      params: new HttpParams({fromObject: params})
-    };
-  }
-
   respondGameRequest(notification: Notification, accept: boolean): Observable<Game> {
-    return this.http.put<Game>(this.us.url + '/v1/game/invite', {notification, accept}, this.createOptions({})).pipe(
+    return this.http.put<Game>(this.us.url + '/v1/game/invite', {notification, accept}, this.us.createOptions({})).pipe(
       catchError((error) => {
         this.handleError(error);
         return throwError(error);
@@ -50,7 +38,7 @@ export class GameService {
   }
 
   getGameInfo(id: string): Observable<GameInfo> {
-    return this.http.get<GameInfo>(this.us.url + '/v1/game/' + id, this.createOptions({})).pipe(
+    return this.http.get<GameInfo>(this.us.url + '/v1/game/' + id, this.us.createOptions({})).pipe(
       catchError((error) => {
         this.handleError(error);
         return throwError(error);
@@ -59,7 +47,7 @@ export class GameService {
   }
 
   sendMove(id: number, pos: number): Observable<GameInfo> {
-    return this.http.put<GameInfo>(this.us.url + '/v1/game/' + id, {x: pos}, this.createOptions({})).pipe(
+    return this.http.put<GameInfo>(this.us.url + '/v1/game/' + id, {x: pos}, this.us.createOptions({})).pipe(
       catchError((error) => {
         this.handleError(error);
         return throwError(error);
@@ -69,7 +57,7 @@ export class GameService {
 
   sendSpectate(id: string, spectate: boolean): Observable<Status> {
     console.log(spectate);
-    return this.http.put<Status>(this.us.url + '/v1/game/' + id + '/spectate', {follow: spectate}, this.createOptions({})).pipe(
+    return this.http.put<Status>(this.us.url + '/v1/game/' + id + '/spectate', {follow: spectate}, this.us.createOptions({})).pipe(
       catchError((error) => {
         this.handleError(error);
         return throwError(error);
@@ -78,7 +66,7 @@ export class GameService {
   }
 
   sendMessage(id: string, message: string): Observable<Status>{
-    return this.http.post<Status>(this.us.url + '/v1/game/' + id + '/messages', {message}, this.createOptions({})).pipe(
+    return this.http.post<Status>(this.us.url + '/v1/game/' + id + '/messages', {message}, this.us.createOptions({})).pipe(
       catchError((error) => {
         this.handleError(error);
         return throwError(error);
@@ -87,7 +75,7 @@ export class GameService {
   }
 
   getMessage(id: string): Observable<Message[]>{
-    return this.http.get<Message[]>(this.us.url + '/v1/game/' + id + '/messages', this.createOptions({})).pipe(
+    return this.http.get<Message[]>(this.us.url + '/v1/game/' + id + '/messages', this.us.createOptions({})).pipe(
       catchError((error) => {
         this.handleError(error);
         return throwError(error);
@@ -96,7 +84,7 @@ export class GameService {
   }
 
   getUsers(id: string): Observable<Spectator[]>{
-    return this.http.get<Spectator[]>(this.us.url + '/v1/game/' + id + '/users', this.createOptions({})).pipe(
+    return this.http.get<Spectator[]>(this.us.url + '/v1/game/' + id + '/users', this.us.createOptions({})).pipe(
       catchError((error) => {
         this.handleError(error);
         return throwError(error);

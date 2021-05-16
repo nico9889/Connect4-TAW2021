@@ -75,11 +75,12 @@
                src="{{(friend.avatar)? friend.avatar:'assets/img/profile.png'}}"/>
         </div>
         <div class="col">
-          <a routerLink="/chat/{{friend.id}}"><i class="bi bi-chat-dots mx-2" style="font-size: 2rem;"></i></a>
-          <a role="button" (click)="sendGameRequest(friend.id)"><i class="bi bi-joystick mx-2"
-                                                                   style="font-size: 2rem;"></i></a>
-          <a routerLink="/game/{{friend.game}}"><i [ngClass]="(friend.online)?'bi bi-eye mx-2':'bi bi-eye-slash mx-2'"
-                        style="font-size: 2rem;"></i></a>
+          <a [routerLink]="['/chat/', friend.id]" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Chat">
+            <i class="bi bi-chat-dots mx-2" style="font-size: 2rem;"></i></a>
+          <a role="button" (click)="sendGameRequest(friend.id)" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Send game request">
+            <i class="bi bi-joystick mx-2" style="font-size: 2rem;"></i></a>
+          <a [routerLink]="['/game/',friend.game]" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Spectate current game">
+            <i [ngClass]="(friend.online)?'bi bi-eye mx-2':'bi bi-eye-slash mx-2'" style="font-size: 2rem;"></i></a>
         </div>
       </div>
       <div class="row ms-3">

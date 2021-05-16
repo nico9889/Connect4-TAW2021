@@ -18,6 +18,8 @@ export class SocketioService {
     this.socket = io(this.us.url, {
       auth: {token: 'Bearer ' + this.us.getToken()}
     });
+
+    // FIXME: remove on final version
     this.socket.onAny((m) => {
       console.log(m);
     });
