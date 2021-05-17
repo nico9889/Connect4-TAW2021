@@ -20,8 +20,8 @@ export class UserComponent implements OnInit {
   }
 
   private getUser(): void {
-    this.route.queryParams.subscribe((queryParams) => {
-      this.users.getUser(queryParams.id).subscribe((user) => {
+    this.route.paramMap.subscribe((params) => {
+      this.users.getUser(params.get('id')).subscribe((user) => {
         this.user = user;
       }, (_) => {
         this.router.navigate(['/']);
