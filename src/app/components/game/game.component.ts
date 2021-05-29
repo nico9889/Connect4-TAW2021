@@ -15,7 +15,6 @@ export class GameComponent implements OnInit, AfterViewChecked, AfterViewInit, O
   @ViewChild('gamecontainer') container;
   @ViewChild('gamecanvas') canvas;
   @ViewChild('chatbox') chatbox;
-  private usernames: Map<string, string> = new Map();
   private cellX: number;
   private id;
   private audio: HTMLAudioElement;
@@ -43,26 +42,22 @@ export class GameComponent implements OnInit, AfterViewChecked, AfterViewInit, O
     this.socket.socket.on('game message new', (_) => {
       this.getMessage();
     });
-    this.socket.socket.on('game user new', (_) => {
-      this.getUsers();
-    });
   }
 
   ngOnDestroy(): void {
     this.socket.socket.off('game update');
     this.socket.socket.off('game message new');
     this.game.sendSpectate(this.id, false).subscribe();
-    this.route.paramMap
   }
 
   private drawBoard(): void {
     const ctx = this.canvas.nativeElement.getContext('2d');
-    ctx.fillStyle = '#5070FF';
+    ctx.fillStyle = '#30249C';
     ctx.fillRect(0, 0, this.canvas.nativeElement.width, this.canvas.nativeElement.height);
     this.cellX = ((this.canvas.nativeElement.width - 50) / 7);
     const cellY = ((this.canvas.nativeElement.height - 50) / 6);
     const coinDiameter = Math.min(this.cellX, cellY) * 0.8;
-    ctx.fillStyle = '#FFFFFF';
+    ctx.fillStyle = '#C0C0C0';
 
     let posX = (-this.cellX / 2) + 25;
     if (this.gameInfo) {
@@ -79,7 +74,7 @@ export class GameComponent implements OnInit, AfterViewChecked, AfterViewInit, O
               ctx.fillStyle = '#FFDB00';
               break;
             default:
-              ctx.fillStyle = '#FFFFFF';
+              ctx.fillStyle = '#E0E0E0';
               break;
           }
           ctx.beginPath();
@@ -111,17 +106,19 @@ export class GameComponent implements OnInit, AfterViewChecked, AfterViewInit, O
       const rect = this.canvas.nativeElement.getBoundingClientRect();
       const posX = (click.clientX - 25 - rect.left) / (this.cellX);
       const x = Math.floor(posX);
-      console.log(x);
       this.game.sendMove(this.id, x).subscribe((gameInfo) => {
+        console.log(gameInfo);
         this.gameInfo = gameInfo;
         this.drawBoard();
+      }, (err) => {
+        console.error(err);
       });
       this.drawBoard();
     });
   }
 
   @HostListener('window:resize', ['$event'])
-  onResize(event): void {
+  onResize(_): void {
     this.resize();
     this.drawBoard();
   }
@@ -141,17 +138,5 @@ export class GameComponent implements OnInit, AfterViewChecked, AfterViewInit, O
       message.focus();
       message.value = '';
     });
-  }
-
-  private getUsers(): void {
-    this.game.getUsers(this.route.snapshot.paramMap.get('id')).subscribe((users) => {
-      users.forEach((user) => {
-        this.usernames.set(user._id, user.username);
-      });
-    });
-  }
-
-  getUsername(sender: string): string {
-    return this.usernames.get(sender) || 'Anonymous';
   }
 }

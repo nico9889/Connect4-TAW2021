@@ -1,7 +1,13 @@
-export interface Message{
+export interface Message {
   id?: string;
-  sender: string;
-  receiver: string;
+  sender: {
+    _id: string;
+    username: string;
+  };
+  receiver: {
+    _id: string;
+    username: string;
+  };
   content: string;
   datetime: Date;
 }

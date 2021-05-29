@@ -10,12 +10,21 @@ export interface Board{
 
 export interface GameInfo{
   board: Board;
-  playerOne: string;
-  playerOneName: string;
-  playerTwo: string;
-  playerTwoName: string;
-  winner?: string;
-  winnerName?: string;
+  playerOne: {
+    _id: string,
+    username: string,
+    friends: string[];
+  };
+  playerTwo: {
+    _id: string,
+    username: string,
+    friends: string[];
+  };
+  winner?: {
+    _id: string,
+    username: string,
+    friends: string[];
+  };
   playerOneTurn: boolean;
   spectators: string[];
   ended?: Date;

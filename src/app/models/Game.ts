@@ -1,7 +1,19 @@
 export interface Game {
   readonly _id: string;
-  playerOne: string;
-  playerTwo: string;
+  playerOne: {
+    _id: string,
+    username: string,
+    friends: string[];
+  };
+  playerTwo: {
+    _id: string,
+    username: string,
+    friends: string[];
+  };
   started: Date;
-  winner: string;
+  winner: {
+    _id: string,
+    username: string,
+    friends: string[];
+  };
 }
