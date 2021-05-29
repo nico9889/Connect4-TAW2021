@@ -21,6 +21,8 @@ export class AppComponent implements OnInit {
   notifications: Notification[] = [];
   alert: string;
   success: boolean;
+  queued: string;
+  onlineFriends: number;
 
   constructor(us: UserBasicAuthService,
               private users: UserHttpService,
@@ -44,7 +46,7 @@ export class AppComponent implements OnInit {
   private load(): void {
     this.socket.connect();
     this.getFriends();
-
+    this.refreshSubscription();
     this.socket.socket.on('friend update', () => {
       this.getFriends();
     });
@@ -56,6 +58,9 @@ export class AppComponent implements OnInit {
       if (m.id) {
         this.router.navigate(['/game/' + m.id]);
       }
+    });
+    this.socket.socket.on('queue update', (_) => {
+      this.refreshSubscription();
     });
   }
 
@@ -70,6 +75,20 @@ export class AppComponent implements OnInit {
     }
   }
 
+  refreshSubscription(): void {
+    this.queued = undefined;
+    this.games.rankedSubscribed().subscribe((result) => {
+      if (result.queued === true) {
+        this.queued = 'In queue: Ranked';
+      }
+    });
+    this.games.scrimmageSubscribed().subscribe((result) => {
+      if (result.queued === true) {
+        this.queued = 'In queue: Scrimmage';
+      }
+    });
+  }
+
   private getNotifications(): void {
     this.ns.getNotifications().subscribe((notifications) => {
       this.notifications = notifications.concat(this.notifications);
@@ -81,10 +100,14 @@ export class AppComponent implements OnInit {
   }
 
   private getFriends(): void {
-    console.log('Getting friends');
     this.users.getFriends().subscribe((friends) => {
-      console.log(friends);
       this.friends = friends;
+      this.onlineFriends = 0;
+      this.friends.forEach((friend) => {
+        if (friend.online) {
+          this.onlineFriends++;
+        }
+      });
     });
   }
 

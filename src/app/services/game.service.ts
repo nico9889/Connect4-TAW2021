@@ -2,13 +2,12 @@ import {Injectable} from '@angular/core';
 import {Notification} from '../models/Notification';
 import {Observable, throwError} from 'rxjs';
 import {catchError} from 'rxjs/operators';
-import {HttpClient, HttpErrorResponse, HttpHeaders, HttpParams} from '@angular/common/http';
+import {HttpClient, HttpErrorResponse} from '@angular/common/http';
 import {UserBasicAuthService} from './user-basic-auth.service';
 import {Game} from '../models/Game';
 import {GameInfo} from '../models/GameInfo';
 import {Status} from '../models/Status';
-import {Message} from "../models/Message";
-import {Spectator} from "../models/Spectator";
+import {Message} from '../models/Message';
 
 @Injectable({
   providedIn: 'root'
@@ -65,7 +64,7 @@ export class GameService {
     );
   }
 
-  sendMessage(id: string, message: string): Observable<Status>{
+  sendMessage(id: string, message: string): Observable<Status> {
     return this.http.post<Status>(this.us.url + '/v1/game/' + id + '/messages', {message}, this.us.createOptions({})).pipe(
       catchError((error) => {
         this.handleError(error);
@@ -74,7 +73,7 @@ export class GameService {
     );
   }
 
-  getMessage(id: string): Observable<Message[]>{
+  getMessage(id: string): Observable<Message[]> {
     return this.http.get<Message[]>(this.us.url + '/v1/game/' + id + '/messages', this.us.createOptions({})).pipe(
       catchError((error) => {
         this.handleError(error);
@@ -83,8 +82,35 @@ export class GameService {
     );
   }
 
-  getUsers(id: string): Observable<Spectator[]>{
-    return this.http.get<Spectator[]>(this.us.url + '/v1/game/' + id + '/users', this.us.createOptions({})).pipe(
+  rankedSubscription(subscribe: boolean): Observable<Status> {
+    return this.http.put<Status>(this.us.url + '/v1/game/ranked', {subscribe}, this.us.createOptions({})).pipe(
+      catchError((error) => {
+        this.handleError(error);
+        return throwError(error);
+      })
+    );
+  }
+
+  rankedSubscribed(): Observable<{ queued: boolean, inQueue: number }> {
+    return this.http.get<{ queued: boolean, inQueue: number }>(this.us.url + '/v1/game/ranked', this.us.createOptions({})).pipe(
+      catchError((error) => {
+        this.handleError(error);
+        return throwError(error);
+      })
+    );
+  }
+
+  scrimmageSubscription(subscribe: boolean): Observable<Status> {
+    return this.http.put<Status>(this.us.url + '/v1/game/scrimmage', {subscribe}, this.us.createOptions({})).pipe(
+      catchError((error) => {
+        this.handleError(error);
+        return throwError(error);
+      })
+    );
+  }
+
+  scrimmageSubscribed(): Observable<{ queued: boolean, inQueue: number }> {
+    return this.http.get<{ queued: boolean, inQueue: number }>(this.us.url + '/v1/game/scrimmage', this.us.createOptions({})).pipe(
       catchError((error) => {
         this.handleError(error);
         return throwError(error);

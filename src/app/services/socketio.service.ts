@@ -9,9 +9,6 @@ export class SocketioService {
   socket = io(this.us.url);
 
   constructor(private us: UserBasicAuthService) {
-    this.socket.on('broadcast', (m) => {
-      console.log(m);
-    });
   }
 
   connect(): void {

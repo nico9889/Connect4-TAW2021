@@ -12,7 +12,7 @@ export class UsersComponent implements OnInit {
 
   users: User[] = [];
 
-  constructor(public us: UserHttpService, private socket: SocketioService) {
+  constructor(public us: UserHttpService) {
   }
 
   ngOnInit(): void {

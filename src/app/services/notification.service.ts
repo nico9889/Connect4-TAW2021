@@ -1,5 +1,5 @@
 import {Injectable} from '@angular/core';
-import {HttpClient, HttpErrorResponse, HttpHeaders, HttpParams} from '@angular/common/http';
+import {HttpClient, HttpErrorResponse} from '@angular/common/http';
 import {UserBasicAuthService} from './user-basic-auth.service';
 import {Observable, throwError} from 'rxjs';
 import {Notification} from '../models/Notification';
