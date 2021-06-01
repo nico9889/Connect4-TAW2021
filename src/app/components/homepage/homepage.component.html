@@ -1,34 +1,36 @@
 <div class="row">
   <div class="col-8">
     <h2>{{ (user) ? 'Welcome ' + user.username : "Welcome. Please sign-up to start!" }}</h2>
-    <h1 *ngIf="user">Search new game:</h1>
-    <div *ngIf="alert"
-         [ngClass]="(success)?'alert alert-success alert-dismissible fade show':'alert alert-danger alert-dismissible fade show'"
-         role="alert">
-      {{alert}}
-      <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    <div class="container-fluid" *ngIf="user">
+      <h1 >Search new game:</h1>
+      <div *ngIf="alert"
+           [ngClass]="(success)?'alert alert-success alert-dismissible fade show':'alert alert-danger alert-dismissible fade show'"
+           role="alert">
+        {{alert}}
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+      </div>
+      <div class="col">
+        <button type="button" class="btn btn-lg btn-outline-primary" (click)="rankedSubscription()">Ranked <span
+          class="badge badge-light">{{rankedBadge}}</span></button>
+        <button type="button" class="btn btn-lg btn-outline-primary" (click)="scrimmageSubscription()">Scrimmage <span
+          class="badge badge-light">{{scrimmageBadge}}</span></button>
+      </div>
+      <h4>Check your statistics:</h4>
+      <table class="table table-primary">
+        <thead>
+        <tr>
+          <th scope="col">Victories</th>
+          <th scope="col">Losses</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr>
+          <th>{{user?.victories}}</th>
+          <th>{{user?.defeats}}</th>
+        </tr>
+        </tbody>
+      </table>
     </div>
-    <div class="col" *ngIf="user">
-      <button type="button" class="btn btn-lg btn-outline-primary" (click)="rankedSubscription()">Ranked <span
-        class="badge badge-light">{{rankedBadge}}</span></button>
-      <button type="button" class="btn btn-lg btn-outline-primary" (click)="scrimmageSubscription()">Scrimmage <span
-        class="badge badge-light">{{scrimmageBadge}}</span></button>
-    </div>
-    <h4>Check your statistics:</h4>
-    <table class="table table-primary">
-      <thead>
-      <tr>
-        <th scope="col">Victories</th>
-        <th scope="col">Losses</th>
-      </tr>
-      </thead>
-      <tbody>
-      <tr>
-        <th>{{user?.victories}}</th>
-        <th>{{user?.defeats}}</th>
-      </tr>
-      </tbody>
-    </table>
   </div>
   <div class="col">
     <app-leaderboard></app-leaderboard>
