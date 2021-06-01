@@ -4,8 +4,8 @@ import {ActivatedRoute, Router} from '@angular/router';
 import {Message} from '../../models/Message';
 import {UserBasicAuthService} from '../../services/user-basic-auth.service';
 import {UserHttpService} from '../../services/user-http.service';
-import {Friend} from '../../models/Friend';
 import {SocketioService} from '../../services/socketio.service';
+import {Friend} from '../../models/Friend';
 
 @Component({
   selector: 'app-chat',
@@ -13,34 +13,50 @@ import {SocketioService} from '../../services/socketio.service';
   styleUrls: ['./chat.component.css']
 })
 export class ChatComponent implements OnInit, AfterViewChecked {
-  us: UserBasicAuthService;
-  user: Friend;
-  messages: Message[];
   @ViewChild('chatbox') chatbox;
+  basicAuth: UserBasicAuthService;
+  messages: Message[];
+  user: Friend;
   private id;
+
   constructor(private chat: ChatService, private route: ActivatedRoute,
-              us: UserBasicAuthService,
+              basicAuth: UserBasicAuthService,
               public users: UserHttpService,
               private socket: SocketioService,
               public router: Router) {
     socket.socket.on('private message', (m) => {
-      if (m.from === this.user.id) {
-        this.getMessages();
-      }
+      this.getMessages();
     });
-    this.us = us;
+    this.basicAuth = basicAuth;
   }
 
   ngOnInit(): void {
     this.route.paramMap.subscribe((params) => {
       this.id = params.get('id');
+      if (this.basicAuth.hasRole('MODERATOR')) {
+        this.users.getUser(this.id).subscribe((user) => {
+          this.user = {
+            id: user._id,
+            username: user.username,
+            online: true,
+            game: undefined,
+            avatar: user.avatar
+          };
+        });
+      } else {
+        this.users.getFriend(this.id).subscribe((user) => {
+          this.user = user;
+        }, (_) => {
+          this.user = {
+            id: '0',
+            username: 'MODERATOR',
+            online: true,
+            game: undefined,
+            avatar: undefined
+          };
+        });
+      }
       this.getMessages();
-      this.users.getFriend(this.id).subscribe((user) => {
-        this.user = user;
-      }, (err) => {
-        console.error(err);
-        this.router.navigate(['/']);
-      });
     });
   }
 
@@ -54,10 +70,18 @@ export class ChatComponent implements OnInit, AfterViewChecked {
 
   sendMessage(message: HTMLInputElement): void {
     if (message.value !== '') {
-      this.chat.sendUserChat(message.value, this.user.id).subscribe((_) => {
+      this.chat.sendUserChat(message.value, this.id).subscribe((_) => {
         this.getMessages();
         message.value = '';
         message.focus();
+      }, (err) => {
+        console.log(err);
+        this.messages.push({
+          content: err.error.message,
+          datetime: new Date(),
+          receiver: this.id,
+          sender: ''
+        });
       });
     }
   }
