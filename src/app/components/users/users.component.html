@@ -5,14 +5,17 @@
   <tr>
     <th scope="col">Username</th>
     <th scope="col">Status</th>
-    <th scope="col"></th>
+    <th scope="col">Options</th>
   </tr>
   </thead>
   <tbody>
   <tr *ngFor="let user of users">
     <th scope="row">{{user.username}}</th>
     <th>{{user.enabled ? 'Enabled' : 'Disabled'}}</th>
-    <th><a [routerLink]="['/users/',user._id]" class="btn btn-secondary" role="button"><i class="bi bi-pen"></i> Manage</a> </th>
+    <th>
+      <a [routerLink]="['/users/',user._id]" class="btn btn-secondary m-1" role="button"><i class="bi bi-pen"></i> Manage</a>
+      <a [routerLink]="['/chat/',user._id]" class="btn btn-secondary m-1" role="button"><i class="bi bi-chat-dots"></i> Send message</a>
+    </th>
   </tr>
   </tbody>
 </table>
