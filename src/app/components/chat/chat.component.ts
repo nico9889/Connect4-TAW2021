@@ -24,13 +24,14 @@ export class ChatComponent implements OnInit, AfterViewChecked {
               public users: UserHttpService,
               private socket: SocketioService,
               public router: Router) {
-    socket.socket.on('private message', (m) => {
-      this.getMessages();
+    socket.socket.on('private message', (_) => {
+      this.getMessages(1);
     });
     this.basicAuth = basicAuth;
   }
 
   ngOnInit(): void {
+    this.messages = [];
     this.route.paramMap.subscribe((params) => {
       this.id = params.get('id');
       if (this.basicAuth.hasRole('MODERATOR')) {
@@ -48,7 +49,7 @@ export class ChatComponent implements OnInit, AfterViewChecked {
           this.user = user;
         }, (_) => {
           this.user = {
-            id: '0',
+            id: this.id,
             username: 'MODERATOR',
             online: true,
             game: undefined,
@@ -56,13 +57,13 @@ export class ChatComponent implements OnInit, AfterViewChecked {
           };
         });
       }
-      this.getMessages();
+      this.getMessages(50);
     });
   }
 
-  private getMessages(): void {
-    this.chat.getUserChat(this.id).subscribe((messages) => {
-      this.messages = messages;
+  private getMessages(limit: number): void {
+    this.chat.getMessages(this.id, limit).subscribe((messages) => {
+      this.messages = this.messages.concat(messages.reverse());
     }, (err) => {
       console.log(err);
     });
@@ -70,12 +71,12 @@ export class ChatComponent implements OnInit, AfterViewChecked {
 
   sendMessage(message: HTMLInputElement): void {
     if (message.value !== '') {
-      this.chat.sendUserChat(message.value, this.id).subscribe((_) => {
-        this.getMessages();
+      this.chat.sendMessage(message.value, this.id).subscribe((_) => {
+        this.getMessages(1);
         message.value = '';
         message.focus();
       }, (err) => {
-        console.log(err);
+        // If the server returns any error it's showed inside the chat to warn the user
         this.messages.push({
           content: err.error.message,
           datetime: new Date(),

@@ -28,8 +28,8 @@ export class ChatService {
     return throwError('Something bad happened; please try again later.');
   }
 
-  getUserChat(id: string): Observable<Message[]> {
-    return this.http.get<Message[]>(this.us.url + '/v1/messages/' + id, this.us.createOptions({})).pipe(
+  getMessages(id: string, limit: number): Observable<Message[]> {
+    return this.http.get<Message[]>(this.us.url + '/v1/messages/' + id, this.us.createOptions({limit})).pipe(
       tap((data) => console.log(JSON.stringify(data))),
       catchError((error) => {
         this.handleError(error);
@@ -38,7 +38,7 @@ export class ChatService {
     );
   }
 
-  sendUserChat(content: string, receiver: string): Observable<Status> {
+  sendMessage(content: string, receiver: string): Observable<Status> {
     return this.http.post<Status>(this.us.url + '/v1/messages/' + receiver, {message: {content}}, this.us.createOptions({})).pipe(
       tap((data) => console.log(JSON.stringify(data))),
       catchError((error) => {
