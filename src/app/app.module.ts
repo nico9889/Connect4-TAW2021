@@ -3,7 +3,6 @@ import {BrowserModule} from '@angular/platform-browser';
 
 import {AppComponent} from './app.component';
 import {RouterModule} from '@angular/router';
-import {FriendComponent} from './components/friend/friend.component';
 import {HomepageComponent} from './components/homepage/homepage.component';
 import {CommonModule} from '@angular/common';
 import {AppRoutingModule} from './app-routing.module';
@@ -16,16 +15,15 @@ import { UsersComponent } from './components/users/users.component';
 import {UserHttpService} from './services/user-http.service';
 import { UserComponent } from './components/user/user.component';
 import { LeaderboardComponent } from './components/leaderboard/leaderboard.component';
-import {NotificationService} from "./services/notification.service";
-import {SocketioService} from "./services/socketio.service";
+import {NotificationService} from './services/notification.service';
+import {SocketioService} from './services/socketio.service';
 import { ChatComponent } from './components/chat/chat.component';
-import {ChatService} from "./services/chat.service";
+import {ChatService} from './services/chat.service';
 import { GameComponent } from './components/game/game.component';
 
 @NgModule({
   declarations: [
     AppComponent,
-    FriendComponent,
     HomepageComponent,
     LoginComponent,
     RegisterComponent,
