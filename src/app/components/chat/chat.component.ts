@@ -5,7 +5,7 @@ import {Message} from '../../models/Message';
 import {UserBasicAuthService} from '../../services/user-basic-auth.service';
 import {UserHttpService} from '../../services/user-http.service';
 import {SocketioService} from '../../services/socketio.service';
-import {Friend} from '../../models/Friend';
+import {User} from '../../models/User';
 
 @Component({
   selector: 'app-chat',
@@ -16,7 +16,7 @@ export class ChatComponent implements OnInit, AfterViewChecked {
   @ViewChild('chatbox') chatbox;
   basicAuth: UserBasicAuthService;
   messages: Message[];
-  user: Friend;
+  user: User;
   private id;
 
   constructor(private chat: ChatService, private route: ActivatedRoute,
@@ -37,7 +37,7 @@ export class ChatComponent implements OnInit, AfterViewChecked {
       if (this.basicAuth.hasRole('MODERATOR')) {
         this.users.getUser(this.id).subscribe((user) => {
           this.user = {
-            id: user._id,
+            _id: user._id,
             username: user.username,
             online: true,
             game: undefined,
@@ -49,7 +49,7 @@ export class ChatComponent implements OnInit, AfterViewChecked {
           this.user = user;
         }, (_) => {
           this.user = {
-            id: this.id,
+            _id: this.id,
             username: 'MODERATOR',
             online: true,
             game: undefined,

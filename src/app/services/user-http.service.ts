@@ -1,18 +1,17 @@
 import {Injectable} from '@angular/core';
 import {HttpClient, HttpErrorResponse, HttpHeaders} from '@angular/common/http';
 import {UserBasicAuthService} from './user-basic-auth.service';
-import {Observable, throwError, of} from 'rxjs';
+import {Observable, throwError} from 'rxjs';
 import {catchError, tap} from 'rxjs/operators';
 import {LeaderboardUser, User} from '../models/User';
 import {Notification} from '../models/Notification';
 import {Status} from '../models/Status';
-import {Friend} from '../models/Friend';
 
 @Injectable({
   providedIn: 'root'
 })
 export class UserHttpService {
-  private users: Map<string, User> = new Map();
+  avatars: Map<string, string> = new Map();
 
   constructor(private http: HttpClient, private us: UserBasicAuthService) {
     console.log('User service instantiated');
@@ -34,11 +33,6 @@ export class UserHttpService {
 
   getUsers(): Observable<User[]> {
     return this.http.get<User[]>(this.us.url + '/v1/users', this.us.createOptions({})).pipe(
-      tap((users) => {
-        for (const u of users) {
-          this.users.set(u._id, u);
-        }
-      }),
       catchError((error) => {
         UserHttpService.handleError(error);
         return throwError(error);
@@ -47,29 +41,19 @@ export class UserHttpService {
   }
 
   getUser(id: string): Observable<User> {
-    if (this.users.has(id)) {
-      return of(this.users.get(id));
-    } else {
-      return this.http.get<User>(this.us.url + '/v1/users/' + id, this.us.createOptions({})).pipe(
-        tap((user) => {
-          this.users.set(user._id, user);
-        }),
-        catchError((error) => {
-          UserHttpService.handleError(error);
-          return throwError(error);
-        })
-      );
-    }
+    return this.http.get<User>(this.us.url + '/v1/users/' + id, this.us.createOptions({})).pipe(
+      catchError((error) => {
+        UserHttpService.handleError(error);
+        return throwError(error);
+      })
+    );
   }
 
   getAvatar(id: string, force?: boolean): void {
-    if (!this.users.has(id) || !this.users.get(id).avatar || force) {
+    if (!this.avatars.has(id) || force) {
       this.http.get<{ avatar: string }>(this.us.url + '/v1/users/' + id + '/avatar', this.us.createOptions()).pipe(
         tap((data) => {
-          const user = this.users.get(id);
-          if (user) {
-            user.avatar = data.avatar;
-          }
+          this.avatars.set(id, data.avatar);
         }),
         catchError((error) => {
           UserHttpService.handleError(error);
@@ -79,8 +63,7 @@ export class UserHttpService {
     }
   }
 
-  // tslint:disable-next-line:max-line-length
-  editUser(id: string, data: { username?: string, enabled?: boolean, avatar?: string, newPassword?: string, oldPassword?: string }): Observable<Status> {
+  editUser(id: string, data: { username?: string, enabled?: boolean, newPassword?: string, oldPassword?: string }): Observable<Status> {
     return this.http.put<Status>(this.us.url + '/v1/users/' + id, data, this.us.createOptions({})).pipe(
       catchError((error) => {
         UserHttpService.handleError(error);
@@ -135,8 +118,8 @@ export class UserHttpService {
     );
   }
 
-  getFriends(): Observable<Friend[]> {
-    return this.http.get<Friend[]>(this.us.url + '/v1/friendship/', this.us.createOptions({})).pipe(
+  getFriends(): Observable<User[]> {
+    return this.http.get<User[]>(this.us.url + '/v1/friendship/', this.us.createOptions({})).pipe(
       catchError((error) => {
         UserHttpService.handleError(error);
         return throwError(error);
@@ -144,9 +127,8 @@ export class UserHttpService {
     );
   }
 
-  getFriend(id: string): Observable<Friend> {
-    return this.http.get<Friend>(this.us.url + '/v1/friendship/' + id, this.us.createOptions({})).pipe(
-      tap((data) => console.log(JSON.stringify(data))),
+  getFriend(id: string): Observable<User> {
+    return this.http.get<User>(this.us.url + '/v1/friendship/' + id, this.us.createOptions({})).pipe(
       catchError((error) => {
         UserHttpService.handleError(error);
         return throwError(error);

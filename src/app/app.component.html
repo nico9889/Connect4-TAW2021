@@ -75,12 +75,12 @@
       <div class="row m-1 align-items-center">
         <div class="col">
           <img class="m-2" width="64" height="64" alt="Profile photo"
-               src="{{(friend.avatar)? friend.avatar:'assets/img/profile.png'}}"/>
+               src="{{(getAvatar(friend._id))? getAvatar(friend._id):'assets/img/profile.png'}}"/>
         </div>
         <div class="col">
-          <a [routerLink]="['/chat/', friend.id]" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Chat">
+          <a [routerLink]="['/chat/', friend._id]" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Chat">
             <i class="bi bi-chat-dots mx-2" style="font-size: 2rem;"></i></a>
-          <a role="button" (click)="sendGameRequest(friend.id)" data-bs-toggle="tooltip" data-bs-placement="bottom"
+          <a role="button" (click)="sendGameRequest(friend._id)" data-bs-toggle="tooltip" data-bs-placement="bottom"
              title="Send game request">
             <i class="bi bi-joystick mx-2" style="font-size: 2rem;"></i></a>
           <a [routerLink]="['/game/',friend.game]" data-bs-toggle="tooltip" data-bs-placement="bottom"

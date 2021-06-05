@@ -1,5 +1,4 @@
 import {Component, OnInit} from '@angular/core';
-import {Friend} from './models/Friend';
 import {UserBasicAuthService} from './services/user-basic-auth.service';
 import {NotificationService} from './services/notification.service';
 import {Notification, Type} from './models/Notification';
@@ -7,6 +6,7 @@ import {UserHttpService} from './services/user-http.service';
 import {SocketioService} from './services/socketio.service';
 import {GameService} from './services/game.service';
 import {Router} from '@angular/router';
+import {User} from './models/User';
 
 @Component({
   selector: 'app-root',
@@ -17,7 +17,7 @@ export class AppComponent implements OnInit {
   title: 'Connect 4';
   private audio;
   us: UserBasicAuthService;
-  friends: Friend[] = [];
+  friends: User[] = [];
   notifications: Notification[] = [];
   alert: string;
   success: boolean;
@@ -179,5 +179,10 @@ export class AppComponent implements OnInit {
       this.success = false;
       this.alert = 'Error while sending game request';
     });
+  }
+
+  getAvatar(id: string): string {
+    this.users.getAvatar(id);
+    return this.users.avatars.get(id);
   }
 }
