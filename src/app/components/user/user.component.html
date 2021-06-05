@@ -21,31 +21,40 @@
   </div>
   <div class="col">
     <div class="alert alert-danger" *ngIf="!us.enabled()">Please change your password</div>
-    <h3 class="mt-3">Change password</h3>
-    <div class="form-group mb-3">
-      <label for="inputOldPassword" class="sr-only">Old password</label>
-      <input type="password" #oldPasswordTxt id="inputOldPassword" class="form-control" placeholder="Old password"
-             required>
+    <form>
+      <h3 class="mt-3">Change password</h3>
+      <div class="form-group mb-3">
+        <label for="inputOldPassword" class="sr-only">Old password</label>
+        <input type="password" #oldPasswordTxt id="inputOldPassword" class="form-control" placeholder="Old password"
+               required>
 
-      <label for="inputNewPassword" class="sr-only">New password</label>
-      <input type="password" #newPasswordTxt id="inputNewPassword" class="form-control" placeholder="New password"
-             required autofocus>
+        <label for="inputNewPassword" class="sr-only">New password</label>
+        <input type="password" #newPasswordTxt id="inputNewPassword" class="form-control" placeholder="New password"
+               required autofocus>
 
-      <label for="inputNewPasswordRepeat" class="sr-only">New password (Repeat)</label>
-      <input type="password" #newPasswordRepeatTxt id="inputNewPasswordRepeat" class="form-control"
-             placeholder="New password (Repeat)" required autofocus>
+        <label for="inputNewPasswordRepeat" class="sr-only">New password (Repeat)</label>
+        <input type="password" #newPasswordRepeatTxt id="inputNewPasswordRepeat" class="form-control"
+               placeholder="New password (Repeat)" required autofocus>
 
-      <button class="btn btn-primary mt-3"
-              (click)="changePassword(oldPasswordTxt.value, newPasswordTxt.value, newPasswordRepeatTxt.value);">
-        Confirm
-      </button>
+        <button class="btn btn-primary mt-3"
+                (click)="changePassword(oldPasswordTxt.value, newPasswordTxt.value, newPasswordRepeatTxt.value);">
+          Confirm
+        </button>
+      </div>
+    </form>
+    <div class="form-group">
+      <h3>Change avatar:</h3>
+      <input class="mb-3 form-control" type="file" id="formFile" #inputElement>
+      <button class="btn btn-primary" (click)="uploadAvatar()">Upload</button>
     </div>
     <div class="form-group">
-      <label for="avatarChange">Change avatar: </label>
-      <input class="btn" type="file" id="avatarChange" (change)="uploadAvatar($event)">
+      <h3 class="form-label">
+        Manage user:
+      </h3>
+      <button class="btn btn-primary" (click)="switchEnabled();">
+        {{ (user?.enabled) ? 'Disable' : 'Enable' }}
+      </button>
     </div>
-    <button class="btn btn-primary" (click)="switchEnabled();">
-      {{ (user?.enabled) ? 'Disable' : 'Enable' }}
-    </button>
   </div>
+
 </div>

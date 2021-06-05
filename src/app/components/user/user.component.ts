@@ -1,4 +1,4 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, OnInit, ViewChild} from '@angular/core';
 import {UserHttpService} from '../../services/user-http.service';
 import {ActivatedRoute, Router} from '@angular/router';
 import {User} from '../../models/User';
@@ -10,6 +10,8 @@ import {UserBasicAuthService} from '../../services/user-basic-auth.service';
   styleUrls: ['./user.component.css']
 })
 export class UserComponent implements OnInit {
+  @ViewChild('userAvatar') userAvatar;
+  @ViewChild('inputElement') inputElement;
   user: User;
 
   constructor(public us: UserBasicAuthService, private users: UserHttpService, private route: ActivatedRoute, private router: Router) {
@@ -26,6 +28,7 @@ export class UserComponent implements OnInit {
       }, (_) => {
         this.router.navigate(['/']);
       });
+      this.users.getAvatar(params.get('id'));
     });
   }
 
@@ -44,20 +47,17 @@ export class UserComponent implements OnInit {
     });
   }
 
-  // FIXME: MISSING SANITIZATION
-  uploadAvatar(event: Event): void {
-    const element = event.currentTarget as HTMLInputElement;
-    const fileList: FileList | null = element.files;
-    const reader = new FileReader();
-    if (fileList && fileList.length === 1) {
-      reader.readAsDataURL(fileList[0]);
-      reader.onload = () => {
-        this.users.editUser(this.user._id, {avatar: reader.result.toString()})
-          .subscribe(
-            (status) => console.log(status),
-            (err) => console.error(err)
-          );
-      };
+  uploadAvatar(): void {
+    const element = this.inputElement.nativeElement;
+    if (element.files?.length === 1) {
+      this.users.updateAvatar(this.user._id, element.files.item(0))
+        .subscribe(
+          (status) => {
+            console.log(status);
+            this.users.getAvatar(this.user._id, true);
+          },
+          (err) => console.error(err)
+        );
     }
   }
 }

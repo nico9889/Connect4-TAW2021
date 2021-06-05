@@ -1,7 +1,7 @@
 import {Injectable} from '@angular/core';
-import {HttpClient, HttpErrorResponse} from '@angular/common/http';
+import {HttpClient, HttpErrorResponse, HttpHeaders} from '@angular/common/http';
 import {UserBasicAuthService} from './user-basic-auth.service';
-import {Observable, throwError} from 'rxjs';
+import {Observable, throwError, of} from 'rxjs';
 import {catchError, tap} from 'rxjs/operators';
 import {LeaderboardUser, User} from '../models/User';
 import {Notification} from '../models/Notification';
@@ -12,12 +12,13 @@ import {Friend} from '../models/Friend';
   providedIn: 'root'
 })
 export class UserHttpService {
+  private users: Map<string, User> = new Map();
 
   constructor(private http: HttpClient, private us: UserBasicAuthService) {
     console.log('User service instantiated');
   }
 
-  private handleError(error: HttpErrorResponse): Observable<never> {
+  private static handleError(error: HttpErrorResponse): Observable<never> {
     if (error.error instanceof ErrorEvent) {
       // A client-side or network error occurred. Handle it accordingly.
       console.error('An error occurred:', error.error.message);
@@ -33,29 +34,56 @@ export class UserHttpService {
 
   getUsers(): Observable<User[]> {
     return this.http.get<User[]>(this.us.url + '/v1/users', this.us.createOptions({})).pipe(
-      tap((data) => console.log(JSON.stringify(data))),
+      tap((users) => {
+        for (const u of users) {
+          this.users.set(u._id, u);
+        }
+      }),
       catchError((error) => {
-        this.handleError(error);
+        UserHttpService.handleError(error);
         return throwError(error);
       })
     );
   }
 
   getUser(id: string): Observable<User> {
-    return this.http.get<User>(this.us.url + '/v1/users/' + id, this.us.createOptions({})).pipe(
-      tap((data) => console.log(JSON.stringify(data))),
-      catchError((error) => {
-        this.handleError(error);
-        return throwError(error);
-      })
-    );
+    if (this.users.has(id)) {
+      return of(this.users.get(id));
+    } else {
+      return this.http.get<User>(this.us.url + '/v1/users/' + id, this.us.createOptions({})).pipe(
+        tap((user) => {
+          this.users.set(user._id, user);
+        }),
+        catchError((error) => {
+          UserHttpService.handleError(error);
+          return throwError(error);
+        })
+      );
+    }
+  }
+
+  getAvatar(id: string, force?: boolean): void {
+    if (!this.users.has(id) || !this.users.get(id).avatar || force) {
+      this.http.get<{ avatar: string }>(this.us.url + '/v1/users/' + id + '/avatar', this.us.createOptions()).pipe(
+        tap((data) => {
+          const user = this.users.get(id);
+          if (user) {
+            user.avatar = data.avatar;
+          }
+        }),
+        catchError((error) => {
+          UserHttpService.handleError(error);
+          return throwError(error);
+        })
+      ).subscribe();
+    }
   }
 
   // tslint:disable-next-line:max-line-length
   editUser(id: string, data: { username?: string, enabled?: boolean, avatar?: string, newPassword?: string, oldPassword?: string }): Observable<Status> {
     return this.http.put<Status>(this.us.url + '/v1/users/' + id, data, this.us.createOptions({})).pipe(
       catchError((error) => {
-        this.handleError(error);
+        UserHttpService.handleError(error);
         return throwError(error);
       })
     );
@@ -65,34 +93,43 @@ export class UserHttpService {
     return this.http.get<LeaderboardUser[]>(this.us.url + '/v1/leaderboard', this.us.createOptions({})).pipe(
       tap((data) => console.log(JSON.stringify(data))),
       catchError((error) => {
-        this.handleError(error);
+        UserHttpService.handleError(error);
         return throwError(error);
       })
     );
   }
 
   sendFriendRequest(username: string): Observable<Status> {
-    return this.http.post<Status>(this.us.url + '/v1/friendship/', {username, request: true}, this.us.createOptions({})).pipe(
+    return this.http.post<Status>(this.us.url + '/v1/friendship/', {
+      username,
+      request: true
+    }, this.us.createOptions({})).pipe(
       catchError((error) => {
-        this.handleError(error);
+        UserHttpService.handleError(error);
         return throwError(error);
       })
     );
   }
 
   respondFriendRequest(notification: Notification, accept: boolean): Observable<Status> {
-    return this.http.put<Status>(this.us.url + '/v1/friendship/', {notification, accept}, this.us.createOptions({})).pipe(
+    return this.http.put<Status>(this.us.url + '/v1/friendship/', {
+      notification,
+      accept
+    }, this.us.createOptions({})).pipe(
       catchError((error) => {
-        this.handleError(error);
+        UserHttpService.handleError(error);
         return throwError(error);
       })
     );
   }
 
   sendGameRequest(id: string): Observable<Status> {
-    return this.http.post<Status>(this.us.url + '/v1/game/invite/', {id, request: true}, this.us.createOptions({})).pipe(
+    return this.http.post<Status>(this.us.url + '/v1/game/invite/', {
+      id,
+      request: true
+    }, this.us.createOptions({})).pipe(
       catchError((error) => {
-        this.handleError(error);
+        UserHttpService.handleError(error);
         return throwError(error);
       })
     );
@@ -101,7 +138,7 @@ export class UserHttpService {
   getFriends(): Observable<Friend[]> {
     return this.http.get<Friend[]>(this.us.url + '/v1/friendship/', this.us.createOptions({})).pipe(
       catchError((error) => {
-        this.handleError(error);
+        UserHttpService.handleError(error);
         return throwError(error);
       })
     );
@@ -111,7 +148,22 @@ export class UserHttpService {
     return this.http.get<Friend>(this.us.url + '/v1/friendship/' + id, this.us.createOptions({})).pipe(
       tap((data) => console.log(JSON.stringify(data))),
       catchError((error) => {
-        this.handleError(error);
+        UserHttpService.handleError(error);
+        return throwError(error);
+      })
+    );
+  }
+
+  updateAvatar(id: string, avatar: File): Observable<Status> {
+    const formData = new FormData();
+    formData.append('avatar', avatar);
+    const headers = new HttpHeaders({
+      authorization: 'Bearer ' + this.us.getToken()
+    });
+
+    return this.http.post<Status>(this.us.url + '/v1/users/' + id + '/avatar', formData, {headers}).pipe(
+      catchError((error) => {
+        UserHttpService.handleError(error);
         return throwError(error);
       })
     );
