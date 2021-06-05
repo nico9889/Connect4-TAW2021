@@ -34,8 +34,7 @@ export class UserBasicAuthService {
     }
   }
 
-  // tslint:disable-next-line: typedef
-  public createOptions(params = {}) {
+  public createOptions(params = {}): { headers: HttpHeaders, params: HttpParams } {
     return {
       headers: new HttpHeaders({
         authorization: 'Bearer ' + this.getToken(),

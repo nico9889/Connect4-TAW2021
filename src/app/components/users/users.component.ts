@@ -1,7 +1,6 @@
 import {Component, OnInit} from '@angular/core';
 import {UserHttpService} from '../../services/user-http.service';
 import {User} from '../../models/User';
-import {SocketioService} from '../../services/socketio.service';
 
 @Component({
   selector: 'app-users',
