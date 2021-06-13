@@ -1,93 +1,42 @@
-import {AfterViewChecked, Component, OnInit, ViewChild} from '@angular/core';
+import {Component, ElementRef, OnInit, ViewChild} from '@angular/core';
+import {Message} from '../../models/message';
 import {ChatService} from '../../services/chat.service';
-import {ActivatedRoute, Router} from '@angular/router';
-import {Message} from '../../models/Message';
-import {UserBasicAuthService} from '../../services/user-basic-auth.service';
-import {UserHttpService} from '../../services/user-http.service';
-import {SocketioService} from '../../services/socketio.service';
-import {User} from '../../models/User';
+import {UserService} from '../../services/user.service';
+import {Observable} from "rxjs";
+import {User} from "../../models/user";
+
+export enum Type {
+  USER,
+  GAME
+}
 
 @Component({
   selector: 'app-chat',
   templateUrl: './chat.component.html',
   styleUrls: ['./chat.component.css']
 })
-export class ChatComponent implements OnInit, AfterViewChecked {
-  @ViewChild('chatbox') chatbox;
-  basicAuth: UserBasicAuthService;
-  messages: Message[];
-  user: User;
-  private id;
+export class ChatComponent implements OnInit {
+  visible = 'invisible';
+  messages: Message[] = [];
 
-  constructor(private chat: ChatService, private route: ActivatedRoute,
-              basicAuth: UserBasicAuthService,
-              public users: UserHttpService,
-              private socket: SocketioService,
-              public router: Router) {
-    socket.socket.on('private message', (_) => {
-      this.getMessages(1);
+  constructor(private chat: ChatService, private users: UserService) {
+    chat.emitter.subscribe((signal) => {
+      this.chat.getMessages(signal.id, signal.type).subscribe((messages) => {
+        this.messages = messages;
+        this.visible = 'visible';
+      });
     });
-    this.basicAuth = basicAuth;
   }
 
   ngOnInit(): void {
-    this.messages = [];
-    this.route.paramMap.subscribe((params) => {
-      this.id = params.get('id');
-      if (this.basicAuth.hasRole('MODERATOR')) {
-        this.users.getUser(this.id).subscribe((user) => {
-          this.user = {
-            _id: user._id,
-            username: user.username,
-            online: true,
-            game: undefined,
-            avatar: user.avatar
-          };
-        });
-      } else {
-        this.users.getFriend(this.id).subscribe((user) => {
-          this.user = user;
-        }, (_) => {
-          this.user = {
-            _id: this.id,
-            username: 'MODERATOR',
-            online: true,
-            game: undefined,
-            avatar: undefined
-          };
-        });
-      }
-      this.getMessages(50);
-    });
   }
 
-  private getMessages(limit: number): void {
-    this.chat.getMessages(this.id, limit).subscribe((messages) => {
-      this.messages = this.messages.concat(messages.reverse());
-    }, (err) => {
-      console.log(err);
-    });
+  closeChat(): void {
+    this.visible = 'invisible';
   }
 
-  sendMessage(message: HTMLInputElement): void {
-    if (message.value !== '') {
-      this.chat.sendMessage(message.value, this.id).subscribe((_) => {
-        this.getMessages(1);
-        message.value = '';
-        message.focus();
-      }, (err) => {
-        // If the server returns any error it's showed inside the chat to warn the user
-        this.messages.push({
-          content: err.error.message,
-          datetime: new Date(),
-          receiver: this.id,
-          sender: ''
-        });
-      });
-    }
-  }
-
-  ngAfterViewChecked(): void {
-    this.chatbox.nativeElement.scrollTop = this.chatbox.nativeElement.scrollHeight;
+  getUser(id: string): Observable<User>  {
+    console.log('Getting user');
+    return this.users.getUser(id);
   }
 }

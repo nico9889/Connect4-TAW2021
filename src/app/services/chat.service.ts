@@ -1,50 +1,35 @@
-import {Injectable} from '@angular/core';
-import {HttpClient, HttpErrorResponse} from '@angular/common/http';
-import {UserBasicAuthService} from './user-basic-auth.service';
-import {catchError, tap} from 'rxjs/operators';
-import {Observable, throwError} from 'rxjs';
-import {Message} from '../models/Message';
-import {Status} from '../models/Status';
+import {EventEmitter, Injectable} from '@angular/core';
+import {Type} from '../components/chat/chat.component';
+import {Observable} from 'rxjs';
+import {Message} from '../models/message';
+import {HttpClient, HttpParams} from '@angular/common/http';
+import {baseUrl} from '../../costants';
 
 @Injectable({
   providedIn: 'root'
 })
 export class ChatService {
+  emitter: EventEmitter<{ id: string, type: Type }> = new EventEmitter();
 
-  constructor(private http: HttpClient, private us: UserBasicAuthService) {
+  constructor(private http: HttpClient) {
   }
 
-  private handleError(error: HttpErrorResponse): Observable<never> {
-    if (error.error instanceof ErrorEvent) {
-      // A client-side or network error occurred. Handle it accordingly.
-      console.error('An error occurred:', error.error.message);
-    } else {
-      // The backend returned an unsuccessful response code.
-      // The response body may contain clues as to what went wrong,
-      console.error(
-        `Backend returned code ${error.status}, ` +
-        'body was: ' + JSON.stringify(error.error));
+  openChat(id: string, type: Type): void {
+    this.emitter.emit({id, type});
+  }
+
+  getMessages(id: string, type: Type, limit?: number): Observable<Message[]> {
+    console.log('Querying messages ' + id + ' ' + type);
+    switch (type) {
+      case Type.GAME:
+        return this.http.get<Message[]>(baseUrl + '/v1/game/' + id + '/messages');
+      case Type.USER:
+        if (limit && limit > 0) {
+          const params = new HttpParams({fromObject: {limit}});
+          return this.http.get<Message[]>(baseUrl + '/v1/messages/' + id, {params});
+        } else {
+          return this.http.get<Message[]>(baseUrl + '/v1/messages/' + id);
+        }
     }
-    return throwError('Something bad happened; please try again later.');
-  }
-
-  getMessages(id: string, limit: number): Observable<Message[]> {
-    return this.http.get<Message[]>(this.us.url + '/v1/messages/' + id, this.us.createOptions({limit})).pipe(
-      tap((data) => console.log(JSON.stringify(data))),
-      catchError((error) => {
-        this.handleError(error);
-        return throwError(error);
-      })
-    );
-  }
-
-  sendMessage(content: string, receiver: string): Observable<Status> {
-    return this.http.post<Status>(this.us.url + '/v1/messages/' + receiver, {message: {content}}, this.us.createOptions({})).pipe(
-      tap((data) => console.log(JSON.stringify(data))),
-      catchError((error) => {
-        this.handleError(error);
-        return throwError(error);
-      })
-    );
   }
 }

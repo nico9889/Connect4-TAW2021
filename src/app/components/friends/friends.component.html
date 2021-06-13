@@ -1,0 +1,38 @@
+<div class="bg-dark text-light offcanvas offcanvas-end" tabindex="-1" id="friendsOffCanvas"
+     aria-labelledby="friendsOffCanvasLabel">
+  <div class="offcanvas-header">
+    <h5 id="friendsOffCanvasLabel" class="text-light">Friends</h5>
+    <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+  </div>
+  <div class="offcanvas-body">
+    <div class="input-group mb-3">
+      <input type="text" #usernametxt id="inputUsername" class="form-control" placeholder="Username"
+             aria-describedby="username-button">
+      <button class="btn btn-primary" id="username-button">
+        Add friend
+      </button>
+    </div>
+    <div *ngFor="let friend of getFriends()"
+         [ngClass]="friend?.online ? 'card border-success bg-dark m-2' : 'card border-danger bg-dark m-2'" class="card">
+      <div class="row m-1 align-items-center">
+        <div class="col">
+          <img class="m-2" width="64" height="64" alt="Profile photo"
+               src="{{(friend.avatar)? friend.avatar:'assets/img/profile.png'}}"/>
+        </div>
+        <div class="col">
+          <a (click)="openChat(friend._id)" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Chat">
+            <i class="bi bi-chat-dots mx-2" style="font-size: 2rem;"></i></a>
+          <a role="button" data-bs-toggle="tooltip" data-bs-placement="bottom"
+             title="Send game request">
+            <i class="bi bi-joystick mx-2" style="font-size: 2rem;"></i></a>
+          <a [routerLink]="['/game/',friend.game]" data-bs-toggle="tooltip" data-bs-placement="bottom"
+             title="Spectate current game">
+            <i [ngClass]="(friend.online)?'bi bi-eye mx-2':'bi bi-eye-slash mx-2'" style="font-size: 2rem;"></i></a>
+        </div>
+        <div class="row">
+          <a>{{friend.username}}</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

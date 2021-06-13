@@ -1,6 +1,4 @@
-import {Component, OnInit} from '@angular/core';
-import {LeaderboardUser} from '../../models/User';
-import {UserHttpService} from '../../services/user-http.service';
+import { Component, OnInit } from '@angular/core';
 
 @Component({
   selector: 'app-leaderboard',
@@ -8,13 +6,8 @@ import {UserHttpService} from '../../services/user-http.service';
   styleUrls: ['./leaderboard.component.css']
 })
 export class LeaderboardComponent implements OnInit {
-  leaderboard: LeaderboardUser[];
 
-  constructor(private users: UserHttpService) {
-    users.getLeaderboard().subscribe((leaderboard) => {
-      this.leaderboard = leaderboard;
-    });
-  }
+  constructor() { }
 
   ngOnInit(): void {
   }

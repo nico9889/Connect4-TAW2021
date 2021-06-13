@@ -1,30 +1,32 @@
-import {Injectable} from '@angular/core';
+import { Injectable } from '@angular/core';
+import {AuthService} from './auth.service';
+import {baseUrl} from '../../costants';
 import {io} from 'socket.io-client';
-import {UserBasicAuthService} from './user-basic-auth.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class SocketioService {
-  socket = io(this.us.url);
+  io = io(baseUrl);
 
-  constructor(private us: UserBasicAuthService) {
+  constructor(private auth: AuthService) {
+    console.log('SocketIo Service Instantiated');
   }
 
   connect(): void {
-    this.socket = io(this.us.url, {
-      auth: {token: 'Bearer ' + this.us.getToken()}
+    this.io = io(baseUrl, {
+      auth: {token: 'Bearer ' + this.auth.getToken()}
     });
 
     // FIXME: remove on final version
-    this.socket.onAny((m) => {
+    this.io.onAny((m) => {
       console.log(m);
     });
   }
 
   disconnect(): void {
-    if (this.socket.connected) {
-      this.socket.disconnect();
+    if (this.io.connected) {
+      this.io.disconnect();
     }
   }
 }

@@ -1,3 +1,21 @@
+export interface Game {
+  readonly _id: string;
+  playerOne: {
+    _id: string,
+    username: string,
+  };
+  playerTwo: {
+    _id: string,
+    username: string,
+  };
+  started: Date;
+  winner: {
+    _id: string,
+    username: string,
+    friends: string[];
+  };
+}
+
 export enum Coin{
   None,
   Red,
@@ -13,17 +31,14 @@ export interface GameInfo{
   playerOne: {
     _id: string,
     username: string,
-    friends: string[];
   };
   playerTwo: {
     _id: string,
     username: string,
-    friends: string[];
   };
   winner?: {
     _id: string,
     username: string,
-    friends: string[];
   };
   playerOneTurn: boolean;
   spectators: string[];

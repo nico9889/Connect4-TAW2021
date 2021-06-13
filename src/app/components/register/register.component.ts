@@ -1,5 +1,5 @@
 import {Component, OnInit, ViewChild} from '@angular/core';
-import {UserBasicAuthService} from '../../services/user-basic-auth.service';
+import {AuthService} from '../../services/auth.service';
 import {Router} from '@angular/router';
 
 @Component({
@@ -8,31 +8,33 @@ import {Router} from '@angular/router';
   styleUrls: ['./register.component.css']
 })
 export class RegisterComponent implements OnInit {
-  public errMessage = undefined;
-  public user = {password: '', username: '', moderator: false};
-  @ViewChild('moderatorCheckbox') moderatorCheckbox;
+  @ViewChild('moderatorCheckbox') moderatorCheckbox: any;
+  error = '';
+  user = {password: '', username: '', moderator: false};
+  password = '';
 
-  constructor(public us: UserBasicAuthService, public router: Router) {
+
+  constructor(private auth: AuthService, private router: Router) {
   }
 
-
   ngOnInit(): void {
-    if (this.us.isLoggedIn()) {
-      if (!this.us.hasRole('MODERATOR')) {
+  }
+
+  register(): void {
+    if (this.user.password !== '' && this.user.password !== this.password) {
+      this.error = 'Passwords do not match!';
+    } else {
+      this.user.moderator = this.moderatorCheckbox.nativeElement.checked;
+      this.auth.register(this.user).subscribe((data) => {
+        this.error = '';
         this.router.navigate(['/']);
-      }
+      }, (err) => {
+        this.error = err.error.message;
+      });
     }
   }
 
-  signup(): void {
-    this.user.moderator = this.moderatorCheckbox.nativeElement.checked;
-    this.us.register(this.user).subscribe((d) => {
-      console.log('Registration ok: ' + JSON.stringify(d));
-      this.errMessage = undefined;
-      this.router.navigate(['/login']);
-    }, (err) => {
-      console.log('Signup error: ' + JSON.stringify(err.error.errormessage));
-      this.errMessage = err.error.errormessage || err.error.message;
-    });
+  isModerator(): boolean {
+    return this.auth.hasRole('MODERATOR');
   }
 }

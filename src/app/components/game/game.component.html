@@ -1,42 +1,8 @@
-<div class="container-fluid overflow-visible">
-  <div class="alert alert-info" role="alert" *ngIf="gameInfo?.ended">Game
-    ended! {{(gameInfo?.ended) ? gameInfo?.winner.username + ' won!' : 'Tie!'}}</div>
-  <div class="row">
-    <div class="col-sm-9">
-      <div class="container" #gamecontainer>
-        <canvas #gamecanvas id="gamecanvas">
+<div class="container mt-1">
+  <div class="container d-block" #gamecontainer>
+    <canvas #gamecanvas id="gamecanvas">
 
-        </canvas>
-      </div>
-    </div>
-    <div class="col-sm">
-      <div class="card border-primary">
-        <div class="card-body">
-          <p>Turn: {{(gameInfo?.playerOneTurn) ? gameInfo?.playerOne.username : gameInfo?.playerTwo.username}}</p>
-          <p class="text-danger">Player one: {{ gameInfo?.playerOne.username }} </p>
-          <p class="text-warning">Player two: {{ gameInfo?.playerTwo.username }}</p>
-        </div>
-      </div>
-      <div class="chat-box overflow-scroll mt-1" #chatbox>
-        <div *ngFor="let message of messages" [ngClass]="(message.sender?._id === us.getId()) ? 'card text-end': 'card'">
-          <h6 class="card-title ms-3 mt-3">{{message.sender?.username}}</h6>
-          <h6 class="card-subtitle ms-3 text-muted">{{message.datetime}}</h6>
-          <p class="card-body">
-            {{message.content}}
-          </p>
-        </div>
-
-      </div>
-
-      <form>
-        <div class="input-group mt-3">
-          <input type="text" #messagetxt id="inputMessage" class="form-control" placeholder="Message"
-                 aria-describedby="send-button">
-          <button class="btn btn-primary" (click)="sendMessage(messagetxt)" id="send-button">
-            <i class="bi bi-arrow-up-circle"></i> Send
-          </button>
-        </div>
-      </form>
-    </div>
+    </canvas>
   </div>
+  <button class="btn btn-info d-block mx-auto" (click)="openChat()"><i class="bi bi-chat"></i> Open chat</button>
 </div>

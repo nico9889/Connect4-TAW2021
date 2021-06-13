@@ -1,6 +1,8 @@
-import {Component, OnInit} from '@angular/core';
-import {UserHttpService} from '../../services/user-http.service';
-import {User} from '../../models/User';
+import { Component, OnInit } from '@angular/core';
+import {User} from '../../models/user';
+import {UserService} from '../../services/user.service';
+import {ChatService} from '../../services/chat.service';
+import {Type} from '../chat/chat.component';
 
 @Component({
   selector: 'app-users',
@@ -8,23 +10,15 @@ import {User} from '../../models/User';
   styleUrls: ['./users.component.css']
 })
 export class UsersComponent implements OnInit {
+  usersMap: Map<string, User> = new Map<string, User>();
 
-  users: User[] = [];
-
-  constructor(public us: UserHttpService) {
-  }
+  constructor(private users: UserService, private chat: ChatService) { }
 
   ngOnInit(): void {
-    this.getUsers();
+    this.usersMap = this.users.users;
   }
 
-  public getUsers(): void {
-    this.us.getUsers().subscribe(
-      (users) => {
-        this.users = users;
-      }, (err) => {
-        console.error(err);
-      }
-    );
+  openChat(id: string): void {
+    this.chat.openChat(id, Type.USER);
   }
 }
