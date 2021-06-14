@@ -12,14 +12,20 @@ export class NotificationService {
   private notifications: Notification[] = [];
 
   constructor(private http: HttpClient, private auth: AuthService, socket: SocketioService) {
+    console.log('Notification service instantiated');
     this.updateNotifications();
+    const audio = new Audio('assets/sounds/notification.ogg');
+    audio.load();
 
     socket.io.on('notification update', () => {
+      audio.play();
       this.updateNotifications();
     });
 
-    this.auth.logged.subscribe(() => {
-      this.updateNotifications();
+    this.auth.logged.subscribe((logged) => {
+      if (logged) {
+        this.updateNotifications();
+      }
     });
   }
 

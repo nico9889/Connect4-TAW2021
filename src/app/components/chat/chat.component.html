@@ -14,7 +14,7 @@
           </div>
           <div class="col-md-8">
             <div class="card-body">
-              <h5 class="card-title">{{(getUser(message.sender) | async)?.username || '/assets/img/profile.png' }}</h5>
+              <h5 class="card-title">{{(getUser(message.sender) | async)?.username }}</h5>
               <p class="card-text"><small class="text-muted">{{message.datetime}}</small></p>
               <p class="card-text">{{message.content}}</p>
             </div>
@@ -26,10 +26,9 @@
     <div class="card-footer">
       <form>
         <div class="input-group">
-          <input type="text" class="form-control" placeholder="Message" aria-label="Message" aria-describedby="send-button">
-          <button id="send-button" class="btn btn-outline-primary" type="button"><i class="bi bi-envelope"></i> Send</button>
+          <input type="text" class="form-control" placeholder="Message" aria-label="Message" aria-describedby="send-button" #messagetxt>
+          <button id="send-button" class="btn btn-outline-primary" type="button" (click)="sendMessage(messagetxt)"><i class="bi bi-envelope"></i> Send</button>
         </div>
-
       </form>
     </div>
   </div>

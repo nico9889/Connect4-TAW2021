@@ -15,6 +15,7 @@ export class UsersComponent implements OnInit {
   constructor(private users: UserService, private chat: ChatService) { }
 
   ngOnInit(): void {
+    this.users.updateUsers();
     this.usersMap = this.users.users;
   }
 

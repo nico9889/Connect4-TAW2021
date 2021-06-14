@@ -56,7 +56,6 @@ export class AuthService {
     console.log('Logging out');
     this.token = '';
     localStorage.setItem('connect4_874273_token', this.token);
-    this.logged.emit(false);
     const options = {
       headers: new HttpHeaders({
         'cache-control': 'no-cache',
@@ -66,6 +65,7 @@ export class AuthService {
 
     this.http.get(baseUrl + '/v1/logout', options).pipe(
       tap((data) => {
+        this.logged.emit(false);
         console.log(JSON.stringify(data));
       }));
   }

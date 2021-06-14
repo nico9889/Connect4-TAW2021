@@ -1,7 +1,7 @@
 <header>
   <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
     <div class="container-fluid">
-      <a class="navbar-brand" routerLink="/">Connect 4</a>
+      <a class="navbar-brand" routerLink="/" (click)="socket.connect()">Connect 4</a>
       <a class="navbar-text m-1"><span class="badge bg-info"></span></a>
       <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNavBar"
               aria-controls="mainNavBar" aria-expanded="false" aria-label="Toggle navigation">
@@ -20,11 +20,11 @@
         <ul class="navbar-nav ms-auto" *ngIf="auth.isLoggedIn()">
           <li>
             <a class="nav-link" data-bs-toggle="offcanvas" href="#notificationsOffCanvas">
-              <i class="bi bi-bell"></i> Notifications</a>
+              <i class="bi bi-bell"><span class="badge badge-light">{{getNotificationNumber()}}</span></i> Notifications</a>
           </li>
           <li *ngIf="auth.isLoggedIn()">
             <a class="nav-link" data-bs-toggle="offcanvas" href="#friendsOffCanvas">
-              <i class="bi bi-people"></i>
+              <i class="bi bi-people"></i><span class="badge badge-light">{{getFriendsNumber()}}</span>
               Friends</a>
           </li>
           <li class="nav-item dropdown">

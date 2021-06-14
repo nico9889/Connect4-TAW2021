@@ -4,17 +4,23 @@ import {Observable} from 'rxjs';
 import {Message} from '../models/message';
 import {HttpClient, HttpParams} from '@angular/common/http';
 import {baseUrl} from '../../costants';
+import {Status} from '../models/status';
 
 @Injectable({
   providedIn: 'root'
 })
 export class ChatService {
+  private currentId = '';
+  private currentType: Type = Type.USER;
+
   emitter: EventEmitter<{ id: string, type: Type }> = new EventEmitter();
 
   constructor(private http: HttpClient) {
   }
 
   openChat(id: string, type: Type): void {
+    this.currentId = id;
+    this.currentType = type;
     this.emitter.emit({id, type});
   }
 
@@ -31,5 +37,9 @@ export class ChatService {
           return this.http.get<Message[]>(baseUrl + '/v1/messages/' + id);
         }
     }
+  }
+
+  sendMessage(content: string, receiver: string): Observable<Status> {
+    return this.http.post<Status>(baseUrl + '/v1/messages/' + receiver, {message: {content}});
   }
 }

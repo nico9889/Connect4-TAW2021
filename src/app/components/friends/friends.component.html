@@ -12,25 +12,25 @@
         Add friend
       </button>
     </div>
-    <div *ngFor="let friend of getFriends()"
-         [ngClass]="friend?.online ? 'card border-success bg-dark m-2' : 'card border-danger bg-dark m-2'" class="card">
+    <div *ngFor="let friend of getFriends() | keyvalue "
+         [ngClass]="friend.value.online ? 'border-success' : 'border-danger '" class="card bg-dark m-2">
       <div class="row m-1 align-items-center">
         <div class="col">
           <img class="m-2" width="64" height="64" alt="Profile photo"
-               src="{{(friend.avatar)? friend.avatar:'assets/img/profile.png'}}"/>
+               src="{{(friend.value.avatar)? friend.value.avatar:'assets/img/profile.png'}}"/>
         </div>
         <div class="col">
-          <a (click)="openChat(friend._id)" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Chat">
+          <a (click)="openChat(friend.value._id)" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Chat">
             <i class="bi bi-chat-dots mx-2" style="font-size: 2rem;"></i></a>
           <a role="button" data-bs-toggle="tooltip" data-bs-placement="bottom"
              title="Send game request">
             <i class="bi bi-joystick mx-2" style="font-size: 2rem;"></i></a>
-          <a [routerLink]="['/game/',friend.game]" data-bs-toggle="tooltip" data-bs-placement="bottom"
+          <a [routerLink]="['/game/',friend.value.game]" data-bs-toggle="tooltip" data-bs-placement="bottom"
              title="Spectate current game">
-            <i [ngClass]="(friend.online)?'bi bi-eye mx-2':'bi bi-eye-slash mx-2'" style="font-size: 2rem;"></i></a>
+            <i [ngClass]="(friend.value.online)?'bi bi-eye mx-2':'bi bi-eye-slash mx-2'" style="font-size: 2rem;"></i></a>
         </div>
         <div class="row">
-          <a>{{friend.username}}</a>
+          <a>{{friend.value.username}}</a>
         </div>
       </div>
     </div>

@@ -16,12 +16,14 @@ export enum Type {
   styleUrls: ['./chat.component.css']
 })
 export class ChatComponent implements OnInit {
+  private id = '';
   visible = 'invisible';
   messages: Message[] = [];
 
   constructor(private chat: ChatService, private users: UserService) {
     chat.emitter.subscribe((signal) => {
       this.chat.getMessages(signal.id, signal.type).subscribe((messages) => {
+        this.id = signal.id;
         this.messages = messages;
         this.visible = 'visible';
       });
@@ -38,5 +40,23 @@ export class ChatComponent implements OnInit {
   getUser(id: string): Observable<User>  {
     console.log('Getting user');
     return this.users.getUser(id);
+  }
+
+  sendMessage(message: HTMLInputElement): void {
+    if (message.value !== '') {
+      this.chat.sendMessage(message.value, this.id).subscribe((_) => {
+        // this.getMessages(1);
+        message.value = '';
+        message.focus();
+      }, (err) => {
+        // If the server returns any error it's showed inside the chat to warn the user
+        this.messages.push({
+          content: err.error.message,
+          datetime: new Date(),
+          receiver: this.id,
+          sender: ''
+        });
+      });
+    }
   }
 }

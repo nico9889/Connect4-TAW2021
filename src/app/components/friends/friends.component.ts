@@ -16,8 +16,8 @@ export class FriendsComponent implements OnInit {
   ngOnInit(): void {
   }
 
-  getFriends(): IterableIterator<User> {
-    return this.users.friends.values();
+  getFriends(): Map<string, User> {
+    return this.users.friends;
   }
 
   openChat(id: string): void {

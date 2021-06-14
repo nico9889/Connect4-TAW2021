@@ -15,27 +15,46 @@ export class UserService {
   friends = new Map<string, User>();
 
   constructor(private http: HttpClient, private auth: AuthService, socket: SocketioService) {
-    this.updateFriends();
-    this.getUser(auth.getId()).subscribe();
-
-    auth.logged.subscribe(() => {
+    if (auth.isLoggedIn()) {
       this.updateFriends();
+      this.getUser(auth.getId()).subscribe();
+    }
+
+    auth.logged.subscribe((logged) => {
+      if (logged) {
+        this.updateFriends();
+        this.getUser(auth.getId()).subscribe();
+      }
     });
 
-    socket.io.on('friend update', () => {
-      this.updateFriends();
-    });
+    socket.io
+      .on('friend update', () => {
+        this.updateFriends();
+      })
+      .on('friend online', (friend: { id: string }) => {
+        const user = this.users.get(friend.id);
+        if (user) {
+          user.online = true;
+        }
+      })
+      .on('friend offline', (friend: { id: string }) => {
+        const user = this.users.get(friend.id);
+        if (user) {
+          user.online = false;
+        }
+      });
   }
 
   updateAvatar(id: string): void {
     if (this.auth.isLoggedIn()) {
       console.log('Querying avatar ' + id);
-      this.http.get<string>(baseUrl + '/v1/users/' + id + '/avatar').subscribe((avatar) => {
+      this.http.get<{ avatar: string }>(baseUrl + '/v1/users/' + id + '/avatar').subscribe((avatar) => {
         const user = this.users.get(id);
         if (user) {
-          user.avatar = avatar;
+          user.avatar = avatar.avatar;
         }
-      }, (_) => {
+      }, (err) => {
+        console.error(err);
       });
     }
   }
@@ -69,9 +88,11 @@ export class UserService {
       this.http.get<User[]>(baseUrl + '/v2/users').subscribe(
         (users) => {
           for (const user of users) {
-            this.users.set(user._id, user);
-            if (!user.avatar) {
-              this.updateAvatar(user._id);
+            if (!this.users.has(user._id)) {
+              this.users.set(user._id, user);
+              if (!user.avatar) {
+                this.updateAvatar(user._id);
+              }
             }
           }
         }, (err) => {
