@@ -20,7 +20,7 @@
                src="{{(friend.value.avatar)? friend.value.avatar:'assets/img/profile.png'}}"/>
         </div>
         <div class="col">
-          <a (click)="openChat(friend.value._id)" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Chat">
+          <a role="button" (click)="openChat(friend.value._id)" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Chat">
             <i class="bi bi-chat-dots mx-2" style="font-size: 2rem;"></i></a>
           <a role="button" data-bs-toggle="tooltip" data-bs-placement="bottom"
              title="Send game request">
