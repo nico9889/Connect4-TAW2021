@@ -75,9 +75,7 @@ export class ChatComponent implements OnInit, AfterViewChecked {
 
   ngAfterViewChecked(): void {
     if (this.chatBox) {
-      console.log('Autoscroll: ' + this.chatBox.nativeElement.scrollTop);
       this.chatBox.nativeElement.scrollTop = this.chatBox.nativeElement.scrollHeight + 1000;
-      console.log('Autoscroll: ' + this.chatBox.nativeElement.scrollTop);
     }
   }
 }
