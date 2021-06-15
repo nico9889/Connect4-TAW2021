@@ -13,7 +13,6 @@ export class AppComponent {
   auth: AuthService;
 
   constructor(auth: AuthService,
-              public socket: SocketioService,
               private notification: NotificationService,
               private users: UserService
   ) {
