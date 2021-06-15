@@ -6,7 +6,7 @@
         <i class="bi bi-x-lg"></i>
       </button>
     </div>
-    <div class="card-body overflow-scroll">
+    <div class="card-body overflow-scroll" #chatBox>
       <div class="card m-2 bg-dark text-white" *ngFor="let message of messages">
         <div class="row g-0">
           <div class="col-md-4">
@@ -27,7 +27,7 @@
       <form>
         <div class="input-group">
           <input type="text" class="form-control" placeholder="Message" aria-label="Message" aria-describedby="send-button" #messagetxt>
-          <button id="send-button" class="btn btn-outline-primary" type="button" (click)="sendMessage(messagetxt)"><i class="bi bi-envelope"></i> Send</button>
+          <button id="send-button" class="btn btn-outline-primary" type="submit" (click)="sendMessage(messagetxt)"><i class="bi bi-envelope"></i> Send</button>
         </div>
       </form>
     </div>

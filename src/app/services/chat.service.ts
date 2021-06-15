@@ -5,6 +5,7 @@ import {Message} from '../models/message';
 import {HttpClient, HttpParams} from '@angular/common/http';
 import {baseUrl} from '../../costants';
 import {Status} from '../models/status';
+import {tap} from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root'
@@ -24,17 +25,17 @@ export class ChatService {
     this.emitter.emit({id, type});
   }
 
-  getMessages(id: string, type: Type, limit?: number): Observable<Message[]> {
-    console.log('Querying messages ' + id + ' ' + type);
-    switch (type) {
+  getMessages(limit?: number): Observable<Message[]> {
+    console.log('Querying messages ' + this.currentId + ' ' + this.currentType);
+    switch (this.currentType) {
       case Type.GAME:
-        return this.http.get<Message[]>(baseUrl + '/v1/game/' + id + '/messages');
+        return this.http.get<Message[]>(baseUrl + '/v1/game/' + this.currentId + '/messages');
       case Type.USER:
         if (limit && limit > 0) {
           const params = new HttpParams({fromObject: {limit}});
-          return this.http.get<Message[]>(baseUrl + '/v1/messages/' + id, {params});
+          return this.http.get<Message[]>(baseUrl + '/v1/messages/' + this.currentId, {params});
         } else {
-          return this.http.get<Message[]>(baseUrl + '/v1/messages/' + id);
+          return this.http.get<Message[]>(baseUrl + '/v1/messages/' + this.currentId);
         }
     }
   }
