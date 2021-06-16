@@ -6,6 +6,7 @@ import {SocketioService} from './socketio.service';
 import {AuthService} from './auth.service';
 import {Observable, of} from 'rxjs';
 import {tap} from 'rxjs/operators';
+import {Status} from '../models/status';
 
 @Injectable({
   providedIn: 'root'
@@ -111,7 +112,7 @@ export class UserService {
   }
 
   getUser(id: string): Observable<User> {
-    console.log('Getting user ' + id);
+    console.log('Getting user ' + JSON.stringify(id));
     const result = this.users.get(id);
     if (!result) {
       return this.http.get<User>(baseUrl + '/v1/users/' + id).pipe(
@@ -124,5 +125,9 @@ export class UserService {
     } else {
       return of(result);
     }
+  }
+
+  edit(id: string, data: { enabled?: boolean, avatar?: string, newPassword?: string, oldPassword?: string }): Observable<Status> {
+    return this.http.put<Status>(baseUrl + '/v1/users/' + id, data);
   }
 }

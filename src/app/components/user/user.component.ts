@@ -32,13 +32,12 @@ export class UserComponent implements OnInit {
   }
 
   changePassword(oldPassword: string, newPassword: string, newPasswordRepeat: string): void {
-    /*
-    if (newPassword === newPasswordRepeat) {
-      this.users.editUser(this.user._id, {oldPassword, newPassword}).subscribe((status) => console.log(status));
+    if (newPassword === newPasswordRepeat && this.user) {
+      this.users.edit(this.user._id, {oldPassword, newPassword})
+        .subscribe((status) => console.log(status));
     }
     this.auth.logout();
     this.router.navigate(['/login']);
-     */
   }
 
 
@@ -48,14 +47,12 @@ export class UserComponent implements OnInit {
 
 
   switchEnabled(): void {
-    /*
     if (this.user) {
       this.user.enabled = !this.user.enabled;
-      this.users.editUser(this.user._id, {enabled: this.user.enabled}).subscribe((status) => {
+      this.users.edit(this.user._id, {enabled: this.user.enabled}).subscribe((status) => {
         console.log(status);
       });
     }
-     */
   }
 
   isModerator(): boolean {
