@@ -8,9 +8,9 @@
   </div>
   <div class="col">
     <button type="button" class="btn btn-lg btn-outline-primary mx-1" (click)="rankedSubscription()">Ranked <span
-      class="badge badge-light">{{rankedBadge}}</span></button>
+      class="badge badge-light">{{game.rankedQueue}}</span></button>
     <button type="button" class="btn btn-lg btn-outline-primary mx-1" (click)="scrimmageSubscription()">Scrimmage <span
-      class="badge badge-light">{{scrimmageBadge}}</span></button>
+      class="badge badge-light">{{game.scrimmageQueue}}</span></button>
   </div>
   <h2 class="text-light mt-2">Friends:</h2>
   <div class="card bg-dark mt-2" *ngFor="let friend of getFriends() | keyvalue"
@@ -25,7 +25,7 @@
           <h5 class="card-title">{{friend.value.username}}</h5>
           <p class="card-text"><small class="text-muted">Victories :{{friend.value.victories}}</small></p>
           <p class="card-text"><small class="text-muted">Defeats :{{friend.value.defeats}}</small></p>
-          <button class="btn btn-outline-primary"><i class="bi bi-joystick"></i> Send game request</button>
+          <button class="btn btn-outline-primary" (click)="sendGameRequest(friend.value._id)"><i class="bi bi-joystick"></i> Send game request</button>
         </div>
       </div>
     </div>

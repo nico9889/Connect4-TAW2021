@@ -3,6 +3,7 @@ import {AuthService} from './services/auth.service';
 import {SocketioService} from './services/socketio.service';
 import {NotificationService} from './services/notification.service';
 import {UserService} from './services/user.service';
+import {GameService} from './services/game.service';
 
 @Component({
   selector: 'app-root',
@@ -14,7 +15,8 @@ export class AppComponent {
 
   constructor(auth: AuthService,
               private notification: NotificationService,
-              private users: UserService
+              private users: UserService,
+              private game: GameService
   ) {
     this.auth = auth;
   }
@@ -23,8 +25,12 @@ export class AppComponent {
     this.auth.logout();
   }
 
+  getQueue(): string {
+    return this.game.queue;
+  }
+
   getNotificationNumber(): number {
-    return this.notification.getNotifications().length;
+    return this.notification.getNotifications().size;
   }
 
   getFriendsNumber(): number {

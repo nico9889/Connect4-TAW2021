@@ -25,7 +25,7 @@ export class RegisterComponent implements OnInit {
       this.error = 'Passwords do not match!';
     } else {
       this.user.moderator = this.moderatorCheckbox.nativeElement.checked;
-      this.auth.register(this.user).subscribe((data) => {
+      this.auth.register(this.user).subscribe((_) => {
         this.error = '';
         this.router.navigate(['/']);
       }, (err) => {

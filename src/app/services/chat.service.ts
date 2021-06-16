@@ -5,7 +5,6 @@ import {Message} from '../models/message';
 import {HttpClient, HttpParams} from '@angular/common/http';
 import {baseUrl} from '../../costants';
 import {Status} from '../models/status';
-import {tap} from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root'
@@ -20,6 +19,7 @@ export class ChatService {
   }
 
   openChat(id: string, type: Type): void {
+    console.log('Chat type: ' + type);
     this.currentId = id;
     this.currentType = type;
     this.emitter.emit({id, type});
@@ -27,20 +27,22 @@ export class ChatService {
 
   getMessages(limit?: number): Observable<Message[]> {
     console.log('Querying messages ' + this.currentId + ' ' + this.currentType);
+    limit = limit || 50;
+    const params = new HttpParams({fromObject: {limit}});
     switch (this.currentType) {
       case Type.GAME:
-        return this.http.get<Message[]>(baseUrl + '/v1/game/' + this.currentId + '/messages');
+        return this.http.get<Message[]>(baseUrl + '/v1/messages/' + this.currentId, {params});
       case Type.USER:
-        if (limit && limit > 0) {
-          const params = new HttpParams({fromObject: {limit}});
-          return this.http.get<Message[]>(baseUrl + '/v1/messages/' + this.currentId, {params});
-        } else {
-          return this.http.get<Message[]>(baseUrl + '/v1/messages/' + this.currentId);
-        }
+        return this.http.get<Message[]>(baseUrl + '/v1/messages/' + this.currentId, {params});
     }
   }
 
-  sendMessage(content: string, receiver: string): Observable<Status> {
-    return this.http.post<Status>(baseUrl + '/v1/messages/' + receiver, {message: {content}});
+  sendMessage(content: string): Observable<Status> {
+    switch (this.currentType) {
+      case Type.USER:
+        return this.http.post<Status>(baseUrl + '/v1/messages/' + this.currentId, {message: {content}});
+      case Type.GAME:
+        return this.http.post<Status>(baseUrl + '/v1/game/' + this.currentId + '/messages', {message: {content}});
+    }
   }
 }

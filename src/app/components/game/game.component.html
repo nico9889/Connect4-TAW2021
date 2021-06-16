@@ -1,8 +1,22 @@
+<div *ngIf="gameInfo?.ended" role="alert" class="alert alert-info show mt-1">Game
+  ended! {{(gameInfo?.winner) ? gameInfo?.winner?.username + ' won!' : 'Tie!'}}</div>
 <div class="container mt-1">
   <div class="container d-block" #gamecontainer>
     <canvas #gamecanvas id="gamecanvas">
 
     </canvas>
   </div>
-  <button class="btn btn-info d-block mx-auto" (click)="openChat()"><i class="bi bi-chat"></i> Open chat</button>
+  <div class="card bg-dark">
+    <div class="card-header">
+      <div class="row">
+        <h5 class="card-title">
+          Turn: {{(gameInfo?.playerOneTurn) ? gameInfo?.playerOne?.username : gameInfo?.playerTwo?.username}}</h5>
+        <button class="btn btn-info d-block mx-auto" (click)="openChat()"><i class="bi bi-chat"></i> Open chat</button>
+      </div>
+    </div>
+    <div class="card-body">
+      <p class="card-text text-danger">Player one: {{gameInfo?.playerOne?.username}}</p>
+      <p class="card-text text-warning">Player two: {{gameInfo?.playerTwo?.username}}</p>
+    </div>
+  </div>
 </div>

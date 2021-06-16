@@ -18,20 +18,18 @@ export enum Type {
 })
 export class ChatComponent implements OnInit, AfterViewChecked {
   @ViewChild('chatBox') chatBox: ElementRef | undefined;
-  private id = '';
   visible = 'invisible';
   messages: Message[] = [];
 
   constructor(private chat: ChatService, private users: UserService, private socket: SocketioService) {
-    chat.emitter.subscribe((signal) => {
+    chat.emitter.subscribe((_) => {
       this.chat.getMessages().subscribe((messages) => {
-        this.id = signal.id;
         this.messages = messages.reverse();
         this.visible = 'visible';
       });
     });
 
-    this.socket.io.on('private message', () => {
+    this.socket.io.on('message new', () => {
       this.getMessages(1);
     });
   }
@@ -57,7 +55,7 @@ export class ChatComponent implements OnInit, AfterViewChecked {
 
   sendMessage(message: HTMLInputElement): void {
     if (message.value !== '') {
-      this.chat.sendMessage(message.value, this.id).subscribe((_) => {
+      this.chat.sendMessage(message.value).subscribe((_) => {
         this.getMessages(1);
         message.value = '';
         message.focus();
@@ -66,7 +64,7 @@ export class ChatComponent implements OnInit, AfterViewChecked {
         this.messages.push({
           content: err.error.message,
           datetime: new Date(),
-          receiver: this.id,
+          receiver: '',
           sender: ''
         });
       });
