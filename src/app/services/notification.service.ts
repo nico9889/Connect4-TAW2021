@@ -9,7 +9,7 @@ import {Notification} from '../models/notification';
   providedIn: 'root'
 })
 export class NotificationService {
-  private notifications: Notification[] = [];
+  private notifications: Map<string, Notification> = new Map<string, Notification>();
 
   constructor(private http: HttpClient, private auth: AuthService, socket: SocketioService) {
     console.log('Notification service instantiated');
@@ -33,12 +33,18 @@ export class NotificationService {
     if (this.auth.isLoggedIn()) {
       console.log('Querying notifications');
       this.http.get<Notification[]>(baseUrl + '/v1/notifications').subscribe((notifications) => {
-        this.notifications = notifications;
+        for (const notification of notifications) {
+          this.notifications.set(notification.uid, notification);
+        }
       });
     }
   }
 
-  getNotifications(): Notification[] {
+  getNotifications(): Map<string, Notification> {
     return this.notifications;
+  }
+
+  delete(notification: Notification): void {
+    this.notifications.delete(notification.uid);
   }
 }
