@@ -52,8 +52,11 @@
         <h3 class="form-label text-light">
           Manage user:
         </h3>
-        <button class="btn btn-primary" (click)="switchEnabled()">
-          {{ (isEnabled()) ? 'Disable' : 'Enable' }}
+        <button class="btn btn-primary m-1" (click)="switchEnabled()">
+          {{ (user?.enabled) ? 'Disable' : 'Enable' }}
+        </button>
+        <button class="btn btn-primary m-1" (click)="deleteUser()">
+          Delete user
         </button>
       </div>
     </div>
