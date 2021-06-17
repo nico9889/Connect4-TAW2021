@@ -10,10 +10,23 @@ import {Type} from '../chat/chat.component';
   styleUrls: ['./friends.component.css']
 })
 export class FriendsComponent implements OnInit {
+  alert = '';
+  success = true;
+
   constructor(private users: UserService, private chat: ChatService) {
   }
 
   ngOnInit(): void {
+  }
+
+  sendFriendRequest(username: string): void {
+    this.users.sendFriendRequest(username).subscribe((_) => {
+      this.alert = 'Friend request sent successfully';
+      this.success = true;
+    }, (_) => {
+      this.alert = 'An error occurred while sending friend request';
+      this.success = false;
+    });
   }
 
   getFriends(): Map<string, User> {

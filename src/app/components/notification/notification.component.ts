@@ -5,6 +5,7 @@ import {ChatService} from '../../services/chat.service';
 import {Type as ChatType} from '../chat/chat.component';
 import {GameService} from '../../services/game.service';
 import {Router} from '@angular/router';
+import {UserService} from '../../services/user.service';
 
 @Component({
   selector: 'app-notification',
@@ -15,7 +16,11 @@ export class NotificationComponent implements OnInit {
   message = '';
   success = true;
 
-  constructor(private notification: NotificationService, private chat: ChatService, private game: GameService, private router: Router) {
+  constructor(private notification: NotificationService,
+              private chat: ChatService,
+              private game: GameService,
+              private users: UserService,
+              private router: Router) {
   }
 
   ngOnInit(): void {
@@ -24,11 +29,13 @@ export class NotificationComponent implements OnInit {
   acceptNotification(notification: Notification): void {
     switch (notification.type) {
       case NotificationType.FRIEND_REQUEST:
-        this.notification.delete(notification);
+        this.users.handleFriendRequest(notification, true).subscribe((_) => {
+          this.notification.delete(notification);
+        });
         break;
       case NotificationType.GAME_INVITE:
         this.game.accept(notification, true).subscribe((game) => {
-          if (game){
+          if (game) {
             this.router.navigate(['/game/' + game._id]);
             this.notification.delete(notification);
           }
@@ -45,7 +52,9 @@ export class NotificationComponent implements OnInit {
   denyNotification(notification: Notification): void {
     switch (notification.type) {
       case NotificationType.FRIEND_REQUEST:
-        this.notification.delete(notification);
+        this.users.handleFriendRequest(notification, false).subscribe((_) => {
+          this.notification.delete(notification);
+        });
         break;
       case NotificationType.GAME_INVITE:
         this.game.accept(notification, false);

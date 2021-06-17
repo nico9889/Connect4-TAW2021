@@ -7,6 +7,7 @@ import {AuthService} from './auth.service';
 import {Observable, of} from 'rxjs';
 import {tap} from 'rxjs/operators';
 import {Status} from '../models/status';
+import {Notification} from "../models/notification";
 
 @Injectable({
   providedIn: 'root'
@@ -159,5 +160,13 @@ export class UserService {
         this.users.delete(id);
       })
     );
+  }
+
+  sendFriendRequest(username: string): Observable<Status> {
+    return this.http.post<Status>(baseUrl + '/v1/friendship/', {username});
+  }
+
+  handleFriendRequest(notification: Notification, accept: boolean): Observable<Status> {
+    return this.http.put<Status>(baseUrl + '/v1/friendship/', {notification, accept});
   }
 }
