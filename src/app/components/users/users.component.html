@@ -9,12 +9,12 @@
       </tr>
     </thead>
     <tbody>
-      <tr *ngFor="let user of usersMap.values()">
-        <td>{{user.username}}</td>
-        <td>{{user.enabled ? 'Enabled' : 'Disabled'}}</td>
+      <tr *ngFor="let user of usersMap | keyvalue">
+        <td>{{user.value.username}}</td>
+        <td>{{user.value.enabled ? 'Enabled' : 'Disabled'}}</td>
         <td>
-          <a [routerLink]="['/users/',user._id]" class="btn btn-primary m-1" role="button"><i class="bi bi-pen"></i> Manage</a>
-          <a (click)="openChat(user._id)" class="btn btn-primary m-1" role="button"><i class="bi bi-chat-dots"></i> Send message</a>
+          <a [routerLink]="['/users/',user.value._id]" class="btn btn-primary m-1" role="button"><i class="bi bi-pen"></i> Manage</a>
+          <a (click)="openChat(user.value._id)" class="btn btn-primary m-1" role="button"><i class="bi bi-chat-dots"></i> Send message</a>
         </td>
       </tr>
     </tbody>
