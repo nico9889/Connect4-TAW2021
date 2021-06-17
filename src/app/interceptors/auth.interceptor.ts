@@ -20,11 +20,14 @@ export class AuthInterceptor implements HttpInterceptor {
     let cloned: HttpRequest<any>;
     if (token && !this.auth.isTokenExpired()) {
       // If we have a valid JWT Token we send it
+      const headers = req.headers
+        .set('Authorization', 'Bearer ' + token)
+        .set('cache-control', 'no-cache');
+      if (!headers.has('Content-Type')) {
+        headers.set('Content-Type', 'application/json');
+      }
       cloned = req.clone({
-        headers: req.headers
-          .set('Authorization', 'Bearer ' + token)
-          .set('cache-control', 'no-cache')
-          .set('Content-Type', 'application/json')
+        headers
       });
     } else if (this.auth.isTokenExpired()) {
       // If the token is expired we block the request and navigate to the login page
@@ -36,7 +39,7 @@ export class AuthInterceptor implements HttpInterceptor {
       cloned = req.clone({
         headers: req.headers
           .set('cache-control', 'no-cache')
-          .set('Content-Type', 'application/json')
+          .set('Content-Type', req.headers.get('Content-Type') || 'application/json')
       });
     }
     return next.handle(cloned);
