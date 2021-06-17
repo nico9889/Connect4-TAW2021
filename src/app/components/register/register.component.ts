@@ -1,4 +1,4 @@
-import {Component, OnInit, ViewChild} from '@angular/core';
+import {Component, ElementRef, OnInit, ViewChild} from '@angular/core';
 import {AuthService} from '../../services/auth.service';
 import {Router} from '@angular/router';
 
@@ -8,7 +8,7 @@ import {Router} from '@angular/router';
   styleUrls: ['./register.component.css']
 })
 export class RegisterComponent implements OnInit {
-  @ViewChild('moderatorCheckbox') moderatorCheckbox: any;
+  @ViewChild('moderatorCheckbox') moderatorCheckbox: ElementRef | undefined;
   error = '';
   user = {password: '', username: '', moderator: false};
   password = '';
@@ -24,7 +24,7 @@ export class RegisterComponent implements OnInit {
     if (this.user.password !== '' && this.user.password !== this.password) {
       this.error = 'Passwords do not match!';
     } else {
-      this.user.moderator = this.moderatorCheckbox.nativeElement.checked;
+      this.user.moderator = this.moderatorCheckbox?.nativeElement.checked;
       this.auth.register(this.user).subscribe((_) => {
         this.error = '';
         this.router.navigate(['/']);
