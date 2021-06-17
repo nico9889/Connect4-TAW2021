@@ -1,6 +1,6 @@
 import {Injectable} from '@angular/core';
 import {User} from '../models/user';
-import {HttpClient, HttpParams} from '@angular/common/http';
+import {HttpClient, HttpHeaders, HttpParams} from '@angular/common/http';
 import {baseUrl} from '../../costants';
 import {SocketioService} from './socketio.service';
 import {AuthService} from './auth.service';
@@ -111,23 +111,53 @@ export class UserService {
     }
   }
 
-  getUser(id: string): Observable<User> {
-    console.log('Getting user ' + JSON.stringify(id));
+  getUser(id: string, force?: boolean): Observable<User> {
     const result = this.users.get(id);
-    if (!result) {
+    if (!result || force) {
+      console.log('Getting user ' + JSON.stringify(id));
       return this.http.get<User>(baseUrl + '/v1/users/' + id).pipe(
         tap((user) => {
+          console.log(JSON.stringify(user));
           if (!this.users.has(user._id)) {
+            console.log('User not exists. Creating new.');
             this.users.set(user._id, user);
+          } else {
+            console.log('User exists. Updating existing.');
+            const u = this.users.get(user._id);
+            if (u) {
+              u.enabled = user.enabled;
+              u.online = user.online;
+              u.avatar = user.avatar;
+              u.victories = user.victories;
+              u.defeats = user.defeats;
+              u.game = user.game;
+              u.last_password_change = user.last_password_change;
+              this.updateAvatar(u._id);
+            }
           }
         })
       );
     } else {
+      console.log('Getting cached user ' + JSON.stringify(id));
       return of(result);
     }
   }
 
-  edit(id: string, data: { enabled?: boolean, avatar?: string, newPassword?: string, oldPassword?: string }): Observable<Status> {
+  edit(id: string, data: { enabled?: boolean, newPassword?: string, oldPassword?: string }): Observable<Status> {
     return this.http.put<Status>(baseUrl + '/v1/users/' + id, data);
+  }
+
+  uploadAvatar(id: string, avatar: File): Observable<Status> {
+    const formData = new FormData();
+    formData.append('avatar', avatar);
+    return this.http.post<Status>(baseUrl + '/v1/users/' + id + '/avatar', formData);
+  }
+
+  delete(id: string): Observable<Status> {
+    return this.http.delete<Status>(baseUrl + '/v1/users/' + id).pipe(
+      tap((_) => {
+        this.users.delete(id);
+      })
+    );
   }
 }
