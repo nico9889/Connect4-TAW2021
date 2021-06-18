@@ -2,7 +2,7 @@ import {Component, OnInit} from '@angular/core';
 import {AuthService} from '../../services/auth.service';
 import {UserService} from '../../services/user.service';
 import {User} from '../../models/user';
-import {GameService} from "../../services/game.service";
+import {GameService} from '../../services/game.service';
 
 @Component({
   selector: 'app-homepage',

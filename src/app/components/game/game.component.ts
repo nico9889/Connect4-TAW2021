@@ -7,12 +7,12 @@ import {
   OnInit,
   ViewChild
 } from '@angular/core';
-import {GameInfo} from '../../models/game';
+import {GameInfo, Coin} from '../../models/game';
 import {ChatService} from '../../services/chat.service';
 import {GameService} from '../../services/game.service';
 import {ActivatedRoute} from '@angular/router';
 import {Type} from '../chat/chat.component';
-import {SocketioService} from "../../services/socketio.service";
+import {SocketioService} from '../../services/socketio.service';
 
 @Component({
   selector: 'app-game',
@@ -57,10 +57,10 @@ export class GameComponent implements OnInit, AfterViewInit, AfterViewChecked, O
         for (let y = 0; y < 6; y++) {
           posY += (cellY);
           switch (this.gameInfo.board.board[y][x]) {
-            case 1:
+            case Coin.Red:
               ctx.fillStyle = '#FF0050';
               break;
-            case 2:
+            case Coin.Yellow:
               ctx.fillStyle = '#FFDB00';
               break;
             default:
