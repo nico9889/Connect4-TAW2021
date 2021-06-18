@@ -169,4 +169,8 @@ export class UserService {
   handleFriendRequest(notification: Notification, accept: boolean): Observable<Status> {
     return this.http.put<Status>(baseUrl + '/v1/friendship/', {notification, accept});
   }
+
+  getLeaderboard(): Observable<User[]> {
+    return this.http.get<User[]>(baseUrl + '/v1/leaderboard');
+  }
 }

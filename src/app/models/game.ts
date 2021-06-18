@@ -8,11 +8,12 @@ export interface Game {
     _id: string,
     username: string,
   };
+  board: Board;
+  moves?: number[];
   started: Date;
-  winner: {
+  winner?: {
     _id: string,
     username: string,
-    friends: string[];
   };
 }
 

@@ -1,1 +1,19 @@
-<p>leaderboard works!</p>
+<div class="container text-center mt-3">
+  <h1 class="text-light"><i class="bi bi-trophy"></i> Top 10</h1>
+  <table class="table table-dark border-primary">
+    <thead>
+    <tr>
+      <th>#</th>
+      <th>Username</th>
+      <th>Ratio</th>
+    </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let user of leaderboard, let i = index">
+        <td>{{i+1}}</td>
+        <td>{{user.username}}</td>
+        <td>{{(user.victories !== undefined && user.defeats !== undefined) ? user.victories / (user.defeats + 1) : '?'}}</td>
+      </tr>
+    </tbody>
+  </table>
+</div>

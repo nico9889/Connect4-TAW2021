@@ -2,7 +2,7 @@
   <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
     <div class="container-fluid">
       <a class="navbar-brand" routerLink="/">Connect 4</a>
-      <a class="navbar-text m-1"><span class="badge bg-info">In queue: {{getQueue()}}</span></a>
+      <a class="navbar-text m-1"><span class="badge bg-info" *ngIf="auth.isLoggedIn()">In queue: {{getQueue()}}</span></a>
       <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNavBar"
               aria-controls="mainNavBar" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
@@ -15,6 +15,9 @@
           </li>
           <li *ngIf="auth.hasRole('MODERATOR')">
             <a class="nav-link" routerLink="/users"><i class="bi bi-person-lines-fill"></i> Users</a>
+          </li>
+          <li class="nav-item" *ngIf="auth.isLoggedIn()">
+            <a class="nav-link" routerLink="/leaderboard"><i class="bi bi-trophy"></i> Top 10</a>
           </li>
         </ul>
         <ul class="navbar-nav ms-auto" *ngIf="auth.isLoggedIn()">
@@ -35,11 +38,12 @@
             </a>
             <ul class="dropdown-menu dropdown-menu-dark dropdown-menu-lg-end"
                 aria-labelledby="navbarDropdown">
-              <li><a class="dropdown-item" routerLink="/users/{{auth.getId()}}">Profile settings</a></li>
+              <li><a class="dropdown-item" routerLink="/users/{{auth.getId()}}"><i class="bi bi-gear"></i> Profile settings</a></li>
+              <li><a class="dropdown-item" routerLink="/stats/{{auth.getId()}}"><i class="bi bi-graph-up"></i> Game stats</a></li>
               <li>
                 <hr class="dropdown-divider">
               </li>
-              <li><a class="dropdown-item" href="" (click)="logout()">Logout</a></li>
+              <li><a class="dropdown-item" href="" (click)="logout()"><i class="bi bi-door-open"></i> Logout</a></li>
             </ul>
           </li>
         </ul>

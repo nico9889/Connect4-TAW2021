@@ -24,6 +24,7 @@ import {GameService} from './services/game.service';
 import {NotificationService} from './services/notification.service';
 import {UserService} from './services/user.service';
 import {ChatService} from './services/chat.service';
+import { StatsComponent } from './components/stats/stats.component';
 
 @NgModule({
   declarations: [
@@ -37,7 +38,8 @@ import {ChatService} from './services/chat.service';
     FriendsComponent,
     NotificationComponent,
     ChatComponent,
-    GameComponent
+    GameComponent,
+    StatsComponent
   ],
   imports: [
     BrowserModule,

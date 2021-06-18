@@ -4,7 +4,7 @@ import {Status} from '../models/status';
 import {Notification} from '../models/notification';
 import {baseUrl} from '../../costants';
 import {Game, GameInfo} from '../models/game';
-import {HttpClient} from '@angular/common/http';
+import {HttpClient, HttpParams} from '@angular/common/http';
 import {SocketioService} from './socketio.service';
 import {AuthService} from './auth.service';
 import {Router} from '@angular/router';
@@ -65,16 +65,8 @@ export class GameService {
     });
   }
 
-  rankedSubscribed(): Observable<{ queued: boolean, inQueue: number }> {
-    return this.http.get<{ queued: boolean, inQueue: number }>(baseUrl + '/v1/game/ranked');
-  }
-
   scrimmageSubscription(subscribe: boolean): Observable<Status> {
     return this.http.put<Status>(baseUrl + '/v1/game/scrimmage', {subscribe});
-  }
-
-  scrimmageSubscribed(): Observable<{ queued: boolean, inQueue: number }> {
-    return this.http.get<{ queued: boolean, inQueue: number }>(baseUrl + '/v1/game/scrimmage');
   }
 
   accept(notification: Notification, accept: boolean): Observable<Game> {
@@ -83,6 +75,10 @@ export class GameService {
 
   request(id: string): Observable<Status> {
     return this.http.post<Status>(baseUrl + '/v1/game/invite/', {id, request: true});
+  }
 
+  games(id: string): Observable<Game[]>{
+    const params = new HttpParams({fromObject: {user: id}});
+    return this.http.get<Game[]>(baseUrl + '/v1/game/played/', {params});
   }
 }
