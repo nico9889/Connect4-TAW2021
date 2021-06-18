@@ -31,7 +31,7 @@ export class ChatService {
     const params = new HttpParams({fromObject: {limit}});
     switch (this.currentType) {
       case Type.GAME:
-        return this.http.get<Message[]>(baseUrl + '/v1/messages/' + this.currentId, {params});
+        return this.http.get<Message[]>(baseUrl + '/v1/game/' + this.currentId + '/messages', {params});
       case Type.USER:
         return this.http.get<Message[]>(baseUrl + '/v1/messages/' + this.currentId, {params});
     }
@@ -39,10 +39,10 @@ export class ChatService {
 
   sendMessage(content: string): Observable<Status> {
     switch (this.currentType) {
-      case Type.USER:
-        return this.http.post<Status>(baseUrl + '/v1/messages/' + this.currentId, {message: {content}});
       case Type.GAME:
         return this.http.post<Status>(baseUrl + '/v1/game/' + this.currentId + '/messages', {message: {content}});
+      case Type.USER:
+        return this.http.post<Status>(baseUrl + '/v1/messages/' + this.currentId, {message: {content}});
     }
   }
 }
