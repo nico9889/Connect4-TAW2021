@@ -39,7 +39,9 @@ export class ChatComponent implements OnInit, AfterViewChecked {
 
   private getMessages(limit?: number): void {
     this.chat.getMessages(limit).subscribe((messages) => {
-      this.messages.shift();
+      if (this.messages.length > 50) {
+        this.messages.shift();
+      }
       this.messages = this.messages.concat(messages);
     });
   }
