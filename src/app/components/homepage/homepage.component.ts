@@ -28,12 +28,18 @@ export class HomepageComponent implements OnInit {
   rankedSubscription(): void {
     this.game.rankedSubscription(!this.rankedSub).subscribe((_) => {
       this.rankedSub = !this.rankedSub;
+    }, (err) => {
+      this.alert = 'Failed to subscribe to ranked queue: ' + err.error.message;
+      this.success = false;
     });
   }
 
   scrimmageSubscription(): void {
     this.game.scrimmageSubscription(!this.scrimmageSub).subscribe((_) => {
       this.scrimmageSub = !this.scrimmageSub;
+    }, (err) => {
+      this.alert = 'Failed to subscribe to scrimmage queue: ' + err.error.message;
+      this.success = false;
     });
   }
 
@@ -46,7 +52,7 @@ export class HomepageComponent implements OnInit {
       this.alert = 'Game request sent successfully';
       this.success = true;
     }, (err) => {
-      this.alert = 'Failed to send game request';
+      this.alert = 'Failed to send game request: ' + err.error.message;
       this.success = false;
     });
   }
