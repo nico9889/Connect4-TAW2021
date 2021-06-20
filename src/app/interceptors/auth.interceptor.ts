@@ -5,9 +5,10 @@ import {
   HttpEvent,
   HttpInterceptor
 } from '@angular/common/http';
-import {EMPTY, Observable} from 'rxjs';
+import {EMPTY, Observable, throwError} from 'rxjs';
 import {AuthService} from '../services/auth.service';
 import {Router} from '@angular/router';
+import {catchError} from 'rxjs/operators';
 
 @Injectable()
 export class AuthInterceptor implements HttpInterceptor {
@@ -42,6 +43,13 @@ export class AuthInterceptor implements HttpInterceptor {
           .set('Content-Type', req.headers.get('Content-Type') || 'application/json')
       });
     }
-    return next.handle(cloned);
+    return next.handle(cloned).pipe(catchError((err) => {
+      console.error('Error intercepted: ' + err.error.message);
+      if (err.error.statusCode === 401) {
+        this.auth.logout();
+        this.router.navigate(['/login']);
+      }
+      return throwError(err);
+    }));
   }
 }
