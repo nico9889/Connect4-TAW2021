@@ -79,6 +79,6 @@ export class GameService {
 
   games(id: string): Observable<Game[]>{
     const params = new HttpParams({fromObject: {user: id}});
-    return this.http.get<Game[]>(baseUrl + '/v1/game/played/', {params});
+    return this.http.get<Game[]>(baseUrl + '/v1/game/played', {params});
   }
 }
