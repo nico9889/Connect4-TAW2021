@@ -1,38 +1,34 @@
-<div class="row">
-  <div class="col-8">
-    <h2>{{ (user) ? 'Welcome ' + user.username : "Welcome. Please sign-up to start!" }}</h2>
-    <div class="container-fluid" *ngIf="user">
-      <h1 >Search new game:</h1>
-      <div *ngIf="alert"
-           [ngClass]="(success)?'alert alert-success alert-dismissible fade show':'alert alert-danger alert-dismissible fade show'"
-           role="alert">
-        {{alert}}
-        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-      </div>
-      <div class="col">
-        <button type="button" class="btn btn-lg btn-outline-primary" (click)="rankedSubscription()">Ranked <span
-          class="badge badge-light">{{rankedBadge}}</span></button>
-        <button type="button" class="btn btn-lg btn-outline-primary" (click)="scrimmageSubscription()">Scrimmage <span
-          class="badge badge-light">{{scrimmageBadge}}</span></button>
-      </div>
-      <h4>Check your statistics:</h4>
-      <table class="table table-primary">
-        <thead>
-        <tr>
-          <th scope="col">Victories</th>
-          <th scope="col">Losses</th>
-        </tr>
-        </thead>
-        <tbody>
-        <tr>
-          <th>{{user?.victories}}</th>
-          <th>{{user?.defeats}}</th>
-        </tr>
-        </tbody>
-      </table>
-    </div>
+<div class="container-fluid mt-3" *ngIf="auth.isLoggedIn()">
+  <h2 class="text-light">Search new game:</h2>
+  <div *ngIf="alert"
+       [ngClass]="(success)?'alert alert-success alert-dismissible fade show':'alert alert-danger alert-dismissible fade show'"
+       role="alert">
+    {{alert}}
+    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
   </div>
   <div class="col">
-    <app-leaderboard></app-leaderboard>
+    <button type="button" class="btn btn-lg btn-outline-primary mx-1" (click)="rankedSubscription()">Ranked <span
+      class="badge badge-light">{{game.rankedQueue}}</span></button>
+    <button type="button" class="btn btn-lg btn-outline-primary mx-1" (click)="scrimmageSubscription()">Scrimmage <span
+      class="badge badge-light">{{game.scrimmageQueue}}</span></button>
+  </div>
+  <h2 class="text-light mt-2">Friends:</h2>
+  <div class="card bg-dark mt-2" *ngFor="let friend of getFriends() | keyvalue"
+       [ngClass]="friend.value.online ? 'border-success' : 'border-danger'">
+    <div class="row g-0">
+      <div class="col-md-4">
+        <img class="m-3" src="{{friend.value.avatar || '/assets/img/profile.png' }}" alt="Profile Picture" height="128"
+             width="128">
+      </div>
+      <div class="col-md-8">
+        <div class="card-body">
+          <h5 class="card-title">{{friend.value.username}}</h5>
+          <p class="card-text"><small class="text-muted">Victories :{{friend.value.victories}}</small></p>
+          <p class="card-text"><small class="text-muted">Defeats :{{friend.value.defeats}}</small></p>
+          <button class="btn btn-outline-primary m-1" (click)="sendGameRequest(friend.value._id)"><i class="bi bi-joystick"></i> Send game request</button>
+          <button class="btn btn-outline-primary m-1" routerLink="/stats/{{friend.value._id}}"><i class="bi bi-graph-up"></i> Check stats</button>
+        </div>
+      </div>
+    </div>
   </div>
 </div>

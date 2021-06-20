@@ -1,120 +1,84 @@
 import {Injectable} from '@angular/core';
-import {Notification} from '../models/Notification';
-import {Observable, throwError} from 'rxjs';
-import {catchError} from 'rxjs/operators';
-import {HttpClient, HttpErrorResponse} from '@angular/common/http';
-import {UserBasicAuthService} from './user-basic-auth.service';
-import {Game} from '../models/Game';
-import {GameInfo} from '../models/GameInfo';
-import {Status} from '../models/Status';
-import {Message} from '../models/Message';
+import {Observable} from 'rxjs';
+import {Status} from '../models/status';
+import {Notification} from '../models/notification';
+import {baseUrl} from '../../costants';
+import {Game, GameInfo} from '../models/game';
+import {HttpClient, HttpParams} from '@angular/common/http';
+import {SocketioService} from './socketio.service';
+import {AuthService} from './auth.service';
+import {Router} from '@angular/router';
 
 @Injectable({
   providedIn: 'root'
 })
 export class GameService {
-  constructor(private us: UserBasicAuthService, private http: HttpClient) {
+  queue = 'No';
+  rankedQueue = 0;
+  scrimmageQueue = 0;
+
+  constructor(private auth: AuthService,
+              private http: HttpClient,
+              private socket: SocketioService,
+              private router: Router) {
+    socket.io.on('queue update', () => {
+      if (this.auth.isLoggedIn()) {
+        this.updateQueue();
+      }
+    });
+    socket.io.on('game new', (data: { id: string }) => {
+      if (data) {
+        router.navigate(['/game/' + data.id]);
+      }
+    });
   }
 
-  private handleError(error: HttpErrorResponse): Observable<never> {
-    if (error.error instanceof ErrorEvent) {
-      console.error('An error occurred:', error.error.message);
-    } else {
-      console.error(
-        `Backend returned code ${error.status}, ` +
-        'body was: ' + JSON.stringify(error.error));
-    }
-    return throwError('Something bad happened; please try again later.');
+  get(id: string): Observable<GameInfo> {
+    return this.http.get<GameInfo>(baseUrl + '/v1/game/' + id);
   }
 
-  respondGameRequest(notification: Notification, accept: boolean): Observable<Game> {
-    return this.http.put<Game>(this.us.url + '/v1/game/invite', {notification, accept}, this.us.createOptions({})).pipe(
-      catchError((error) => {
-        this.handleError(error);
-        return throwError(error);
-      })
-    );
+  spectate(id: string, follow: boolean): Observable<Status> {
+    return this.http.put<Status>(baseUrl + '/v1/game/' + id + '/spectate', {follow});
   }
 
-  getGameInfo(id: string): Observable<GameInfo> {
-    return this.http.get<GameInfo>(this.us.url + '/v1/game/' + id, this.us.createOptions({})).pipe(
-      catchError((error) => {
-        this.handleError(error);
-        return throwError(error);
-      })
-    );
-  }
-
-  sendMove(id: number, pos: number): Observable<GameInfo> {
-    return this.http.put<GameInfo>(this.us.url + '/v1/game/' + id, {x: pos}, this.us.createOptions({})).pipe(
-      catchError((error) => {
-        this.handleError(error);
-        return throwError(error);
-      })
-    );
-  }
-
-  sendSpectate(id: string, spectate: boolean): Observable<Status> {
-    console.log(spectate);
-    return this.http.put<Status>(this.us.url + '/v1/game/' + id + '/spectate', {follow: spectate}, this.us.createOptions({})).pipe(
-      catchError((error) => {
-        this.handleError(error);
-        return throwError(error);
-      })
-    );
-  }
-
-  sendMessage(id: string, message: string): Observable<Status> {
-    return this.http.post<Status>(this.us.url + '/v1/game/' + id + '/messages', {message}, this.us.createOptions({})).pipe(
-      catchError((error) => {
-        this.handleError(error);
-        return throwError(error);
-      })
-    );
-  }
-
-  getMessage(id: string): Observable<Message[]> {
-    return this.http.get<Message[]>(this.us.url + '/v1/game/' + id + '/messages', this.us.createOptions({})).pipe(
-      catchError((error) => {
-        this.handleError(error);
-        return throwError(error);
-      })
-    );
+  sendMove(id: string, column: number): Observable<GameInfo> {
+    return this.http.put<GameInfo>(baseUrl + '/v1/game/' + id, {column});
   }
 
   rankedSubscription(subscribe: boolean): Observable<Status> {
-    return this.http.put<Status>(this.us.url + '/v1/game/ranked', {subscribe}, this.us.createOptions({})).pipe(
-      catchError((error) => {
-        this.handleError(error);
-        return throwError(error);
-      })
-    );
+    return this.http.put<Status>(baseUrl + '/v1/game/ranked', {subscribe});
   }
 
-  rankedSubscribed(): Observable<{ queued: boolean, inQueue: number }> {
-    return this.http.get<{ queued: boolean, inQueue: number }>(this.us.url + '/v1/game/ranked', this.us.createOptions({})).pipe(
-      catchError((error) => {
-        this.handleError(error);
-        return throwError(error);
-      })
-    );
+  updateQueue(): void {
+    this.queue = 'No';
+    this.http.get<{ queued: boolean, inQueue: number }>(baseUrl + '/v1/game/ranked').subscribe((res) => {
+      if (res.queued) {
+        this.queue = 'Ranked';
+      }
+      this.rankedQueue = res.inQueue;
+    });
+    this.http.get<{ queued: boolean, inQueue: number }>(baseUrl + '/v1/game/scrimmage').subscribe((res) => {
+      if (res.queued) {
+        this.queue = 'Scrimmage';
+      }
+      this.scrimmageQueue = res.inQueue;
+    });
   }
 
   scrimmageSubscription(subscribe: boolean): Observable<Status> {
-    return this.http.put<Status>(this.us.url + '/v1/game/scrimmage', {subscribe}, this.us.createOptions({})).pipe(
-      catchError((error) => {
-        this.handleError(error);
-        return throwError(error);
-      })
-    );
+    return this.http.put<Status>(baseUrl + '/v1/game/scrimmage', {subscribe});
   }
 
-  scrimmageSubscribed(): Observable<{ queued: boolean, inQueue: number }> {
-    return this.http.get<{ queued: boolean, inQueue: number }>(this.us.url + '/v1/game/scrimmage', this.us.createOptions({})).pipe(
-      catchError((error) => {
-        this.handleError(error);
-        return throwError(error);
-      })
-    );
+  accept(notification: Notification, accept: boolean): Observable<Game> {
+    return this.http.put<Game>(baseUrl + '/v1/game/invite', {notification, accept});
+  }
+
+  request(id: string): Observable<Status> {
+    return this.http.post<Status>(baseUrl + '/v1/game/invite/', {id, request: true});
+  }
+
+  games(id: string): Observable<Game[]>{
+    const params = new HttpParams({fromObject: {user: id}});
+    return this.http.get<Game[]>(baseUrl + '/v1/game/played', {params});
   }
 }

@@ -1,0 +1,47 @@
+<div class="bg-dark text-light offcanvas offcanvas-end" tabindex="-1" id="friendsOffCanvas"
+     aria-labelledby="friendsOffCanvasLabel">
+  <div class="offcanvas-header">
+    <h5 id="friendsOffCanvasLabel" class="text-light">Friends</h5>
+    <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+  </div>
+  <div class="offcanvas-body">
+    <form>
+      <div class="input-group mb-3">
+        <input type="text" #usernametxt id="inputUsername" class="form-control" placeholder="Username"
+               aria-describedby="username-button">
+        <button class="btn btn-primary" id="username-button" (click)="sendFriendRequest(usernametxt.value)">
+          Add friend
+        </button>
+      </div>
+    </form>
+    <div *ngIf="alert" [ngClass]="(success)?'alert-success':'alert-danger'" class="alert alert-dismissible fade show"
+         role="alert">
+      {{alert}}
+      <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+    <div *ngFor="let friend of getFriends() | keyvalue "
+         [ngClass]="friend.value.online ? 'border-success' : 'border-danger '" class="card bg-dark m-2">
+      <div class="row m-1 align-items-center">
+        <div class="col">
+          <img class="m-2" width="64" height="64" alt="Profile photo"
+               src="{{(friend.value.avatar)? friend.value.avatar:'assets/img/profile.png'}}"/>
+        </div>
+        <div class="col">
+          <a role="button" (click)="openChat(friend.value._id)" data-bs-toggle="tooltip" data-bs-placement="bottom"
+             title="Chat">
+            <i class="bi bi-chat-dots mx-2" style="font-size: 2rem;"></i></a>
+          <a role="button" data-bs-toggle="tooltip" data-bs-placement="bottom"
+             title="Send game request">
+            <i class="bi bi-joystick mx-2" style="font-size: 2rem;"></i></a>
+          <a [routerLink]="['/game/',friend.value.game]" data-bs-toggle="tooltip" data-bs-placement="bottom"
+             title="Spectate current game">
+            <i [ngClass]="(friend.value.online)?'bi bi-eye mx-2':'bi bi-eye-slash mx-2'"
+               style="font-size: 2rem;"></i></a>
+        </div>
+        <div class="row">
+          <a>{{friend.value.username}}</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

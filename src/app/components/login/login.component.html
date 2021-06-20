@@ -1,19 +1,15 @@
-<div class="container text-center">
-  <h1 class="h3 mb-3"><i class="bi bi-box-arrow-in-right"></i> Please sign in</h1>
-
+<div class="container align-items-center mt-3">
+  <div class="alert alert-danger" *ngIf="error">{{error}}</div>
   <form>
-    <label for="inputUsername" class="sr-only">Username</label>
-    <input type="text" #usernametxt id="inputUsername" class="form-control" placeholder="Username" required autofocus>
-
-    <label for="inputPassword" class="sr-only">Password</label>
-    <input type="password" #passwdtxt id="inputPassword" class="form-control" placeholder="Password" required>
-
-    <div *ngIf="errMessage" class="alert alert-danger" role="alert">
-      Login error: {{errMessage}}
+    <div class="form-group m-2">
+      <label for="usernameInput">Username</label>
+      <input type="text" class="form-control" id="usernameInput" placeholder="Input your username" [(ngModel)]="user.username" name="Username">
     </div>
-
-    <button class="btn btn-lg btn-primary btn-block m-3" (click)="login( usernametxt.value, passwdtxt.value);">Sign in
-    </button>
+    <div class="form-group m-2">
+      <label for="passwordInput">Password</label>
+      <input type="password" class="form-control" id="passwordInput" placeholder="Input your password" aria-describedby="passwordDescription" [(ngModel)]="user.password" name="Password">
+      <small id="passwordDescription">Must contain at least 8 characters, 1 uppercase, 1 lowercase and 1 one number</small>
+    </div>
+    <button class="btn btn-primary" (click)="login()">Login</button>
   </form>
-  <p><a routerLink="/register">Sign-up new user</a></p>
 </div>

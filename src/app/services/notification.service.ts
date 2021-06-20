@@ -1,38 +1,50 @@
 import {Injectable} from '@angular/core';
-import {HttpClient, HttpErrorResponse} from '@angular/common/http';
-import {UserBasicAuthService} from './user-basic-auth.service';
-import {Observable, throwError} from 'rxjs';
-import {Notification} from '../models/Notification';
-import {catchError, tap} from 'rxjs/operators';
+import {SocketioService} from './socketio.service';
+import {HttpClient} from '@angular/common/http';
+import {baseUrl} from '../../costants';
+import {AuthService} from './auth.service';
+import {Notification} from '../models/notification';
 
 @Injectable({
   providedIn: 'root'
 })
 export class NotificationService {
-  constructor(private http: HttpClient, private us: UserBasicAuthService) {
+  private notifications: Map<string, Notification> = new Map<string, Notification>();
+
+  constructor(private http: HttpClient, private auth: AuthService, socket: SocketioService) {
+    console.log('Notification service instantiated');
+    this.updateNotifications();
+    const audio = new Audio('assets/sounds/notification.ogg');
+    audio.load();
+
+    socket.io.on('notification update', () => {
+      audio.play();
+      this.updateNotifications();
+    });
+
+    this.auth.logged.subscribe((logged) => {
+      if (logged) {
+        this.updateNotifications();
+      }
+    });
   }
 
-  private handleError(error: HttpErrorResponse): Observable<never> {
-    if (error.error instanceof ErrorEvent) {
-      // A client-side or network error occurred. Handle it accordingly.
-      console.error('An error occurred:', error.error.message);
-    } else {
-      // The backend returned an unsuccessful response code.
-      // The response body may contain clues as to what went wrong,
-      console.error(
-        `Backend returned code ${error.status}, ` +
-        'body was: ' + JSON.stringify(error.error));
+  updateNotifications(): void {
+    if (this.auth.isLoggedIn()) {
+      console.log('Querying notifications');
+      this.http.get<Notification[]>(baseUrl + '/v1/notifications').subscribe((notifications) => {
+        for (const notification of notifications) {
+          this.notifications.set(notification.uid, notification);
+        }
+      });
     }
-    return throwError('Something bad happened; please try again later.');
   }
 
-  getNotifications(): Observable<Notification[]> {
-    return this.http.get<Notification[]>(this.us.url + '/v1/notifications', this.us.createOptions({})).pipe(
-      tap((data) => console.log(JSON.stringify(data))),
-      catchError((error) => {
-        this.handleError(error);
-        return throwError(error);
-      })
-    );
+  getNotifications(): Map<string, Notification> {
+    return this.notifications;
+  }
+
+  delete(notification: Notification): void {
+    this.notifications.delete(notification.uid);
   }
 }

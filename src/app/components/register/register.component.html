@@ -1,42 +1,23 @@
-<div class="container text-center">
-  <h1 class="h3 mb-3"><i class="bi bi-person-plus"></i> Register</h1>
-
+<div class="container align-items-center mt-3">
+  <div class="alert alert-danger" *ngIf="error">{{error}}</div>
   <form>
-    <div class="form-group">
-      <label for="inputUsername">Username</label>
-      <input type="text" #username="ngModel" required name="username" [(ngModel)]="user.username" class="form-control"
-             id="inputUsername" placeholder="Username">
+    <div class="form-group m-2">
+      <label for="usernameInput">Username</label>
+      <input type="text" class="form-control" id="usernameInput" placeholder="Choose an username" [(ngModel)]="user.username" name="Username">
     </div>
-
-    <div [hidden]="username.valid || username.pristine" class="alert alert-danger">
-      Username is required
+    <div class="form-group m-2">
+      <label for="passwordInput">Password</label>
+      <input type="password" class="form-control" id="passwordInput" placeholder="Choose a password" aria-describedby="passwordDescription" [(ngModel)]="user.password" name="Password">
+      <small id="passwordDescription">Must contain at least 8 characters, 1 uppercase, 1 lowercase and 1 one number</small>
     </div>
-
-    <div class="form-group">
-      <label for="inputPassword">Password</label>
-      <input type="password" #password="ngModel" required name="password" [(ngModel)]="user.password"
-             class="form-control" id="inputPassword" placeholder="Password">
+    <div class="form-group m-2">
+      <label for="repeatPasswordInput">Repeat password</label>
+      <input type="password" class="form-control" id="repeatPasswordInput" placeholder="Input your password again" [(ngModel)]="password" name="PasswordRepeat">
     </div>
-
-    <div [hidden]="password.valid || password.pristine"
-         class="alert alert-danger">
-      Password is required
+    <div class="form-check form-switch" *ngIf="isModerator()">
+      <input class="form-check-input" type="checkbox" id="moderatorSwitch" #moderatorCheckbox>
+      <label class="form-check-label" for="moderatorSwitch">User is a moderator</label>
     </div>
-
-    <div [hidden]="!us.isLoggedIn() && !us.hasRole('MODERATOR')" class="form-check">
-      <input class="form-check-input" type="checkbox" id="moderatorCheckBox" value="" #moderatorCheckbox>
-      <label class="form-check-label" for="moderatorCheckBox">
-        Moderator
-      </label>
-    </div>
-
-    <div *ngIf="errMessage" class="alert alert-danger" role="alert">
-      Login error: {{errMessage}}
-    </div>
-
-
-    <button class="btn btn-lg btn-primary btn-block m-3" [disabled]="!password.valid || !username.valid"
-            (click)="signup();">Register
-    </button>
+    <button class="btn btn-primary" (click)="register()">Register</button>
   </form>
 </div>

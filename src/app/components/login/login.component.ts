@@ -1,7 +1,6 @@
-import {Component, OnInit} from '@angular/core';
-import {UserBasicAuthService} from '../../services/user-basic-auth.service';
+import { Component, OnInit } from '@angular/core';
 import {Router} from '@angular/router';
-import {SocketioService} from '../../services/socketio.service';
+import {AuthService} from '../../services/auth.service';
 
 @Component({
   selector: 'app-login',
@@ -9,27 +8,20 @@ import {SocketioService} from '../../services/socketio.service';
   styleUrls: ['./login.component.css']
 })
 export class LoginComponent implements OnInit {
-  public errMessage = undefined;
+  error = '';
+  user = { username: '', password: '' };
 
-  constructor(private us: UserBasicAuthService, private socket: SocketioService, private router: Router) {
-  }
+  constructor(private auth: AuthService, private router: Router) { }
 
   ngOnInit(): void {
-    if (this.us.isLoggedIn()) {
-      if (this.us.enabled()) {
-        this.router.navigate(['/']);
-      }else{
-        this.router.navigate(['/users' + this.us.getId()]);
-      }
-    }
   }
 
-  login(username: string, password: string): void {
-    this.us.login(username, password).subscribe((d) => {
-      this.errMessage = undefined;
+  login(): void{
+    this.auth.login(this.user.username, this.user.password).subscribe((data) => {
+      this.error = '';
       this.router.navigate(['/']);
     }, (err) => {
-      this.errMessage = err.message;
+      this.error = err.error.message;
     });
   }
 }

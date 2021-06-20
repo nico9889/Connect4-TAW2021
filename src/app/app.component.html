@@ -1,8 +1,8 @@
 <header>
-  <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+  <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
     <div class="container-fluid">
       <a class="navbar-brand" routerLink="/">Connect 4</a>
-      <a class="navbar-text m-1" *ngIf="queued"><span class="badge bg-info">{{queued}}</span></a>
+      <a class="navbar-text m-1"><span class="badge bg-info" *ngIf="auth.isLoggedIn()">In queue: {{getQueue()}}</span></a>
       <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNavBar"
               aria-controls="mainNavBar" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
@@ -13,42 +13,45 @@
           <li class="nav-item">
             <a class="nav-link" routerLink="/"><i class="bi bi-house"></i> Home</a>
           </li>
-          <li *ngIf="us.hasRole('MODERATOR')">
+          <li *ngIf="auth.hasRole('MODERATOR')">
             <a class="nav-link" routerLink="/users"><i class="bi bi-person-lines-fill"></i> Users</a>
           </li>
-        </ul>
-        <ul class="navbar-nav ms-auto">
-          <li *ngIf="us.isLoggedIn()">
-            <a class="nav-link" data-bs-toggle="offcanvas" href="#notificationsOffCanvas">
-              <i class="bi bi-bell"></i><span class="badge bg-info"
-                                              *ngIf="notifications.length > 0">{{notifications.length}}</span>
-              Notifications</a>
+          <li class="nav-item" *ngIf="auth.isLoggedIn()">
+            <a class="nav-link" routerLink="/leaderboard"><i class="bi bi-trophy"></i> Top 10</a>
           </li>
-          <li *ngIf="us.isLoggedIn()">
+        </ul>
+        <ul class="navbar-nav ms-auto" *ngIf="auth.isLoggedIn()">
+          <li>
+            <a class="nav-link" data-bs-toggle="offcanvas" href="#notificationsOffCanvas">
+              <i class="bi bi-bell"><span class="badge badge-light">{{getNotificationNumber()}}</span></i> Notifications</a>
+          </li>
+          <li *ngIf="auth.isLoggedIn()">
             <a class="nav-link" data-bs-toggle="offcanvas" href="#friendsOffCanvas">
-              <i class="bi bi-people"></i>
-              <span class="badge">{{onlineFriends}}</span>
+              <i class="bi bi-people"></i><span class="badge badge-light">{{getFriendsNumber()}}</span>
               Friends</a>
           </li>
-          <li *ngIf="us.isLoggedIn()" class="nav-item dropdown">
+          <li class="nav-item dropdown">
             <a class="nav-link dropdown-toggle" href="" id="userMenuDropdownLink" role="button"
                data-bs-toggle="dropdown" aria-expanded="false">
               <i class="bi bi-person-circle"></i>
-              {{us.getUsername()}}
+              {{auth.getUsername()}}
             </a>
             <ul class="dropdown-menu dropdown-menu-dark dropdown-menu-lg-end"
                 aria-labelledby="navbarDropdown">
-              <li><a class="dropdown-item" routerLink="/users/{{us.getId()}}">Profile settings</a></li>
+              <li><a class="dropdown-item" routerLink="/users/{{auth.getId()}}"><i class="bi bi-gear"></i> Profile settings</a></li>
+              <li><a class="dropdown-item" routerLink="/stats/{{auth.getId()}}"><i class="bi bi-graph-up"></i> Game stats</a></li>
               <li>
                 <hr class="dropdown-divider">
               </li>
-              <li><a class="dropdown-item" href="" (click)="logout()">Logout</a></li>
+              <li><a class="dropdown-item" href="" (click)="logout()"><i class="bi bi-door-open"></i> Logout</a></li>
             </ul>
           </li>
-          <li *ngIf="!us.isLoggedIn()" class="nav-item">
+        </ul>
+        <ul class="navbar-nav ms-auto" *ngIf="!auth.isLoggedIn()">
+          <li class="nav-item">
             <a class="nav-link" routerLink="/login">Login</a>
           </li>
-          <li *ngIf="!us.isLoggedIn()" class="nav-item">
+          <li class="nav-item">
             <a class="nav-link" routerLink="/register">Register</a>
           </li>
         </ul>
@@ -57,75 +60,9 @@
   </nav>
 </header>
 
-<div class="offcanvas offcanvas-end" tabindex="-1" id="friendsOffCanvas" aria-labelledby="friendsOffCanvasLabel">
-  <div class="offcanvas-header">
-    <h5 id="friendsOffCanvasLabel"><i class="bi bi-person"></i> Friends</h5>
-    <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
-  </div>
-  <div class="offcanvas-body">
-    <div class="input-group mb-3">
-      <input type="text" #usernametxt id="inputUsername" class="form-control" placeholder="Username"
-             aria-describedby="username-button">
-      <button class="btn btn-secondary" (click)="sendFriendRequest(usernametxt.value);" id="username-button">
-        Add friend
-      </button>
-    </div>
-    <div *ngFor="let friend of friends"
-         [ngClass]="friend.online ? 'card border-success m-2' : 'card border-danger m-2'" class="card">
-      <div class="row m-1 align-items-center">
-        <div class="col">
-          <img class="m-2" width="64" height="64" alt="Profile photo"
-               src="{{(friend.avatar)? friend.avatar:'assets/img/profile.png'}}"/>
-        </div>
-        <div class="col">
-          <a [routerLink]="['/chat/', friend.id]" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Chat">
-            <i class="bi bi-chat-dots mx-2" style="font-size: 2rem;"></i></a>
-          <a role="button" (click)="sendGameRequest(friend.id)" data-bs-toggle="tooltip" data-bs-placement="bottom"
-             title="Send game request">
-            <i class="bi bi-joystick mx-2" style="font-size: 2rem;"></i></a>
-          <a [routerLink]="['/game/',friend.game]" data-bs-toggle="tooltip" data-bs-placement="bottom"
-             title="Spectate current game">
-            <i [ngClass]="(friend.online)?'bi bi-eye mx-2':'bi bi-eye-slash mx-2'" style="font-size: 2rem;"></i></a>
-        </div>
-      </div>
-      <div class="row ms-3">
-        <a>{{friend.username}}</a>
-      </div>
-    </div>
-  </div>
-</div>
+<app-friends></app-friends>
+<app-notification></app-notification>
 
+<router-outlet></router-outlet>
 
-<div class="offcanvas offcanvas-end" tabindex="-1" id="notificationsOffCanvas"
-     aria-labelledby="notificationsOffCanvasLabel">
-  <div class="offcanvas-header">
-    <h5 id="notificationsOffCanvasLabel"><i class="bi bi-bell"></i> Notifications</h5>
-    <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
-  </div>
-  <div class="offcanvas-body">
-    <div *ngFor="let notification of notifications"
-         [ngClass]="(notification.type.valueOf()!=0)? 'card border-info m-2':'card border-danger m-2'">
-      <h5 class="card-title mt-3 ms-3">{{notification.senderUsername}}</h5>
-      <h6 class="card-subtitle ms-3" *ngIf="notification.type==0">An error has occurred while retrieving the
-        notifications</h6>
-      <h6 class="card-subtitle ms-3" *ngIf="notification.type==1">Sent you a new friend request!</h6>
-      <h6 class="card-subtitle ms-3" *ngIf="notification.type==2">Sent you a new game request!</h6>
-      <h6 class="card-subtitle ms-3" *ngIf="notification.type==3">Sent you a new private message!</h6>
-      <div class="card-body">
-        <a class="btn btn-success btn-sm" (click)="acceptNotification(notification)"><i class="bi bi-check"></i>
-          Accept</a>
-        <a class="btn btn-danger btn-sm" (click)="denyNotification(notification)"><i class="bi bi-x"></i> Refuse</a>
-      </div>
-    </div>
-  </div>
-</div>
-<div *ngIf="alert"
-     [ngClass]="(success)?'alert alert-success alert-dismissible fade show':'alert alert-danger alert-dismissible fade show'"
-     role="alert">
-  {{alert}}
-  <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-</div>
-
-<div class="container-fluid mt-3">
-  <router-outlet></router-outlet>
-</div>
+<app-chat></app-chat>

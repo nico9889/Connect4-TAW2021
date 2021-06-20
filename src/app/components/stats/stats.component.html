@@ -1,0 +1,23 @@
+<div class="container-fluid mt-3">
+  <h1 class="text-light"><i class="bi bi-graph-up"></i> {{user?.username}} stats</h1>
+  <div class="row">
+    <p class="text-light">Victories: {{user?.victories}}</p>
+    <p class="text-light">Defeats: {{user?.defeats}}</p>
+  </div>
+  <hr>
+  <div class="row">
+    <h2 class="text-light">Played games:</h2>
+    <div class="card bg-dark border-primary m-2" *ngFor="let game of games">
+      <div class="card-header text-center ">
+        <h5 class="text-light">{{game.playerOne.username}} vs {{game.playerTwo.username}}</h5>
+      </div>
+      <div class="card-body">
+        <p class="card-text"><b>Winner:</b> {{(game.winner)? game.winner.username: '?'}}</p>
+        <p class="card-text"><b>Ended in:</b> {{game.moves?.length}} moves</p>
+      </div>
+      <div class="card-footer">
+        <button class="btn btn-primary" routerLink="/game/{{game._id}}">Check the board</button>
+      </div>
+    </div>
+  </div>
+</div>
