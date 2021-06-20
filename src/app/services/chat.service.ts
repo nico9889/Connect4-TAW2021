@@ -45,4 +45,9 @@ export class ChatService {
         return this.http.post<Status>(baseUrl + '/v1/messages/' + this.currentId, {message: {content}});
     }
   }
+
+  isUser(): boolean {
+    console.log(this.currentType);
+    return this.currentType === Type.USER;
+  }
 }

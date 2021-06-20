@@ -39,10 +39,19 @@ export class ChatComponent implements OnInit, AfterViewChecked {
 
   private getMessages(limit?: number): void {
     this.chat.getMessages(limit).subscribe((messages) => {
-      if (this.messages.length > 50) {
-        this.messages.shift();
+      const filtered = messages.filter((message) => {
+        let ok = true;
+        for (let i = 0; i < this.messages.length && ok; i++) {
+          ok = ok && (message._id !== this.messages[i]._id);
+        }
+        return ok;
+      });
+      if (filtered) {
+        if (this.messages.length > 50) {
+          this.messages.shift();
+        }
+        this.messages = this.messages.concat(filtered);
       }
-      this.messages = this.messages.concat(messages);
     });
   }
 
@@ -51,19 +60,21 @@ export class ChatComponent implements OnInit, AfterViewChecked {
   }
 
   getUser(id: string): Observable<User> {
-    console.log('Getting user');
     return this.users.getUser(id);
   }
 
   sendMessage(message: HTMLInputElement): void {
     if (message.value !== '') {
       this.chat.sendMessage(message.value).subscribe((_) => {
-        this.getMessages(1);
+        if (this.chat.isUser()) {
+          this.getMessages(1);
+        }
         message.value = '';
         message.focus();
       }, (err) => {
         // If the server returns any error it's showed inside the chat to warn the user
         this.messages.push({
+          _id: '',
           content: err.error.message,
           datetime: new Date(),
           receiver: '',
@@ -75,7 +86,7 @@ export class ChatComponent implements OnInit, AfterViewChecked {
 
   ngAfterViewChecked(): void {
     if (this.chatBox) {
-      this.chatBox.nativeElement.scrollTop = this.chatBox.nativeElement.scrollHeight + 1000;
+      this.chatBox.nativeElement.scrollTop = this.chatBox.nativeElement.scrollHeight;
     }
   }
 }

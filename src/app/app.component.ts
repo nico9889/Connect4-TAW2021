@@ -1,6 +1,5 @@
 import {Component} from '@angular/core';
 import {AuthService} from './services/auth.service';
-import {SocketioService} from './services/socketio.service';
 import {NotificationService} from './services/notification.service';
 import {UserService} from './services/user.service';
 import {GameService} from './services/game.service';

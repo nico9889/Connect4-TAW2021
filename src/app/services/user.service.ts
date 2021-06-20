@@ -1,13 +1,13 @@
 import {Injectable} from '@angular/core';
 import {User} from '../models/user';
-import {HttpClient, HttpHeaders, HttpParams} from '@angular/common/http';
+import {HttpClient, HttpParams} from '@angular/common/http';
 import {baseUrl} from '../../costants';
 import {SocketioService} from './socketio.service';
 import {AuthService} from './auth.service';
 import {Observable, of} from 'rxjs';
 import {tap} from 'rxjs/operators';
 import {Status} from '../models/status';
-import {Notification} from "../models/notification";
+import {Notification} from '../models/notification';
 
 @Injectable({
   providedIn: 'root'
@@ -105,7 +105,6 @@ export class UserService {
 
   updateUser(id: string): void {
     if (this.auth.isLoggedIn()) {
-      console.log('Querying user ' + id);
       this.http.get<User>(baseUrl + '/v1/users/' + id).subscribe((user) => {
         this.users.set(user._id, user);
       });
@@ -115,15 +114,12 @@ export class UserService {
   getUser(id: string, force?: boolean): Observable<User> {
     const result = this.users.get(id);
     if (!result || force) {
-      console.log('Getting user ' + JSON.stringify(id));
       return this.http.get<User>(baseUrl + '/v1/users/' + id).pipe(
         tap((user) => {
           console.log(JSON.stringify(user));
           if (!this.users.has(user._id)) {
-            console.log('User not exists. Creating new.');
             this.users.set(user._id, user);
           } else {
-            console.log('User exists. Updating existing.');
             const u = this.users.get(user._id);
             if (u) {
               u.enabled = user.enabled;
@@ -139,7 +135,6 @@ export class UserService {
         })
       );
     } else {
-      console.log('Getting cached user ' + JSON.stringify(id));
       return of(result);
     }
   }
