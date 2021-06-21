@@ -112,30 +112,37 @@ export class UserService {
   }
 
   getUser(id: string, force?: boolean): Observable<User> {
-    const result = this.users.get(id);
-    if (!result || force) {
-      return this.http.get<User>(baseUrl + '/v1/users/' + id).pipe(
-        tap((user) => {
-          console.log(JSON.stringify(user));
-          if (!this.users.has(user._id)) {
-            this.users.set(user._id, user);
-          } else {
-            const u = this.users.get(user._id);
-            if (u) {
-              u.enabled = user.enabled;
-              u.online = user.online;
-              u.avatar = user.avatar;
-              u.victories = user.victories;
-              u.defeats = user.defeats;
-              u.game = user.game;
-              u.last_password_change = user.last_password_change;
-              this.updateAvatar(u._id);
+    if (id) {
+      const result = this.users.get(id);
+      if (!result || force) {
+        return this.http.get<User>(baseUrl + '/v1/users/' + id).pipe(
+          tap((user) => {
+            console.log(JSON.stringify(user));
+            if (!this.users.has(user._id)) {
+              this.users.set(user._id, user);
+            } else {
+              const u = this.users.get(user._id);
+              if (u) {
+                u.enabled = user.enabled;
+                u.online = user.online;
+                u.avatar = user.avatar;
+                u.victories = user.victories;
+                u.defeats = user.defeats;
+                u.game = user.game;
+                u.last_password_change = user.last_password_change;
+                this.updateAvatar(u._id);
+              }
             }
-          }
-        })
-      );
+          })
+        );
+      } else {
+        return of(result);
+      }
     } else {
-      return of(result);
+      return of({
+        _id: '',
+        username: 'User'
+      });
     }
   }
 
