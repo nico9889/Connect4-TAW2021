@@ -33,10 +33,13 @@ export class UserService {
       .on('friend update', () => {
         this.updateFriends();
       })
-      .on('friend online', (friend: { id: string }) => {
+      .on('friend online', (friend: { id: string, game?: string }) => {
         const user = this.users.get(friend.id);
         if (user) {
           user.online = true;
+          if (friend.game) {
+            user.game = friend.game;
+          }
         }
       })
       .on('friend offline', (friend: { id: string }) => {

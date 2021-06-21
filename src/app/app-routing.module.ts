@@ -15,6 +15,7 @@ const routes: Routes = [
   { path: 'register', component: RegisterComponent},
   { path: 'users', component: UsersComponent},
   { path: 'users/:id', component: UserComponent},
+  { path: 'game', redirectTo: ''},
   { path: 'game/:id', component: GameComponent},
   { path: 'leaderboard', component: LeaderboardComponent},
   { path: 'stats/:id', component: StatsComponent}
