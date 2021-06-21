@@ -1,5 +1,5 @@
 export interface Status {
-  status: number;
+  statusCode: number;
   error?: boolean;
   message?: string;
 }
