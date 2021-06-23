@@ -47,7 +47,6 @@ export class ChatService {
   }
 
   isUser(): boolean {
-    console.log(this.currentType);
     return this.currentType === Type.USER;
   }
 }
