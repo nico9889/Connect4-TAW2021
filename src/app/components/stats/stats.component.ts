@@ -1,9 +1,9 @@
-import { Component, OnInit } from '@angular/core';
+import {Component, OnInit} from '@angular/core';
 import {GameService} from '../../services/game.service';
 import {ActivatedRoute} from '@angular/router';
 import {Game} from '../../models/game';
 import {User} from '../../models/user';
-import { UserService } from 'src/app/services/user.service';
+import {UserService} from 'src/app/services/user.service';
 
 @Component({
   selector: 'app-stats',

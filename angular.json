@@ -27,9 +27,19 @@
               "src/assets"
             ],
             "styles": [
-              "src/styles.css"
+              "src/styles.css",
+              "./node_modules/bootstrap/dist/css/bootstrap.css"
             ],
-            "scripts": [],
+            "scripts": [
+              "./node_modules/@popperjs/core/dist/umd/popper.min.js",
+              "./node_modules/bootstrap/js/dist/dom/data.js",
+              "./node_modules/bootstrap/js/dist/dom/event-handler.js",
+              "./node_modules/bootstrap/js/dist/dom/manipulator.js",
+              "./node_modules/bootstrap/js/dist/dom/selector-engine.js",
+              "./node_modules/bootstrap/js/dist/base-component.js",
+              "./node_modules/bootstrap/js/dist/dropdown.js",
+              "./node_modules/bootstrap/js/dist/offcanvas.js"
+            ],
             "vendorChunk": true,
             "extractLicenses": false,
             "buildOptimizer": false,
@@ -116,6 +126,5 @@
         }
       }
     }
-  },
-  "defaultProject": "connect4-taw2021"
+  }
 }

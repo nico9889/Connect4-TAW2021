@@ -9,22 +9,22 @@ import {HTTP_INTERCEPTORS, HttpClientModule} from '@angular/common/http';
 import {RouterModule} from '@angular/router';
 import {FormsModule} from '@angular/forms';
 import {CommonModule} from '@angular/common';
-import { LoginComponent } from './components/login/login.component';
-import { RegisterComponent } from './components/register/register.component';
-import { HomepageComponent } from './components/homepage/homepage.component';
-import { LeaderboardComponent } from './components/leaderboard/leaderboard.component';
-import { UserComponent } from './components/user/user.component';
-import { UsersComponent } from './components/users/users.component';
-import { FriendsComponent } from './components/friends/friends.component';
-import { NotificationComponent } from './components/notification/notification.component';
-import { ChatComponent } from './components/chat/chat.component';
-import { GameComponent } from './components/game/game.component';
+import {LoginComponent} from './components/login/login.component';
+import {RegisterComponent} from './components/register/register.component';
+import {HomepageComponent} from './components/homepage/homepage.component';
+import {LeaderboardComponent} from './components/leaderboard/leaderboard.component';
+import {UserComponent} from './components/user/user.component';
+import {UsersComponent} from './components/users/users.component';
+import {FriendsComponent} from './components/friends/friends.component';
+import {NotificationComponent} from './components/notification/notification.component';
+import {ChatComponent} from './components/chat/chat.component';
+import {GameComponent} from './components/game/game.component';
 import {SocketioService} from './services/socketio.service';
 import {GameService} from './services/game.service';
 import {NotificationService} from './services/notification.service';
 import {UserService} from './services/user.service';
 import {ChatService} from './services/chat.service';
-import { StatsComponent } from './components/stats/stats.component';
+import {StatsComponent} from './components/stats/stats.component';
 
 @NgModule({
   declarations: [

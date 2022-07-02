@@ -1,13 +1,5 @@
-import {
-  AfterViewChecked, AfterViewInit,
-  Component,
-  ElementRef,
-  HostListener,
-  OnDestroy,
-  OnInit,
-  ViewChild
-} from '@angular/core';
-import {GameInfo, Coin} from '../../models/game';
+import {AfterViewChecked, AfterViewInit, Component, ElementRef, HostListener, OnDestroy, OnInit, ViewChild} from '@angular/core';
+import {Coin, GameInfo} from '../../models/game';
 import {ChatService} from '../../services/chat.service';
 import {GameService} from '../../services/game.service';
 import {ActivatedRoute} from '@angular/router';
