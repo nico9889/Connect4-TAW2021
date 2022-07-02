@@ -1,6 +1,6 @@
 import {Injectable} from '@angular/core';
 import {AuthService} from './auth.service';
-import {baseUrl} from '../../costants';
+import {baseUrl} from '../../constants';
 import {io, Socket} from 'socket.io-client';
 
 @Injectable({

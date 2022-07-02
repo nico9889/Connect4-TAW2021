@@ -1,7 +1,7 @@
 import {Injectable} from '@angular/core';
 import {User} from '../models/user';
 import {HttpClient, HttpParams} from '@angular/common/http';
-import {baseUrl} from '../../costants';
+import {baseUrl} from '../../constants';
 import {SocketioService} from './socketio.service';
 import {AuthService} from './auth.service';
 import {Observable, of} from 'rxjs';

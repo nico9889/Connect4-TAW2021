@@ -1,7 +1,7 @@
 import {Injectable} from '@angular/core';
 import {SocketioService} from './socketio.service';
 import {HttpClient} from '@angular/common/http';
-import {baseUrl} from '../../costants';
+import {baseUrl} from '../../constants';
 import {AuthService} from './auth.service';
 import {Notification} from '../models/notification';
 

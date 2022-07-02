@@ -3,7 +3,7 @@ import {HttpClient, HttpHeaders} from '@angular/common/http';
 import {tap} from 'rxjs/operators';
 import {Observable} from 'rxjs';
 import jwtDecode from 'jwt-decode';
-import {baseUrl} from '../../costants';
+import {baseUrl} from '../../constants';
 
 interface TokenData {
   username: string;

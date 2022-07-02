@@ -3,7 +3,7 @@ import {Type} from '../components/chat/chat.component';
 import {Observable} from 'rxjs';
 import {Message} from '../models/message';
 import {HttpClient, HttpParams} from '@angular/common/http';
-import {baseUrl} from '../../costants';
+import {baseUrl} from '../../constants';
 import {Status} from '../models/status';
 
 @Injectable({

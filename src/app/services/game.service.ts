@@ -2,7 +2,7 @@ import {Injectable} from '@angular/core';
 import {Observable} from 'rxjs';
 import {Status} from '../models/status';
 import {Notification} from '../models/notification';
-import {baseUrl} from '../../costants';
+import {baseUrl} from '../../constants';
 import {Game, GameInfo} from '../models/game';
 import {HttpClient, HttpParams} from '@angular/common/http';
 import {SocketioService} from './socketio.service';
