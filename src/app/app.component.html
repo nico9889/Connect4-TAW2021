@@ -11,13 +11,13 @@
       <div class="collapse navbar-collapse" id="mainNavBar">
         <ul class="navbar-nav me-auto">
           <li class="nav-item">
-            <a class="nav-link" routerLink="/"><i class="bi bi-house"></i> Home</a>
+            <a class="nav-link" routerLink="/" [routerLinkActive]="'active'" [routerLinkActiveOptions]="{exact: true}"><i class="bi bi-house"></i> Home</a>
           </li>
           <li *ngIf="auth.hasRole('MODERATOR')">
-            <a class="nav-link" routerLink="/users"><i class="bi bi-person-lines-fill"></i> Users</a>
+            <a class="nav-link" routerLink="/users" [routerLinkActive]="'active'"><i class="bi bi-person-lines-fill"></i> Users</a>
           </li>
           <li class="nav-item" *ngIf="auth.isLoggedIn()">
-            <a class="nav-link" routerLink="/leaderboard"><i class="bi bi-trophy"></i> Top 10</a>
+            <a class="nav-link" routerLink="/leaderboard" [routerLinkActive]="'active'"><i class="bi bi-trophy"></i> Top 10</a>
           </li>
         </ul>
         <ul class="navbar-nav ms-auto" *ngIf="auth.isLoggedIn()">
